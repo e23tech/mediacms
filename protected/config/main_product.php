@@ -5,10 +5,10 @@ define('BETA_YES', 1);
 define('BETA_NO', 0);
 
 $dbconfig = array(
-    'dbHost' => '127.0.0.1',
+    'dbHost' => '192.168.10.18',
     'dbPort' => '3306',
     'dbName' => 'e23_mediacms',
-    'dbUser' => 'root',
+    'dbUser' => 'mediacms',
     'dbPassword' => '123',
     'tablePrefix' => 'cd_',
 );
@@ -77,8 +77,8 @@ return array(
 		    'tablePrefix' => $dbconfig['tablePrefix'],
             'enableParamLogging' => true,
             'enableProfiling' => true,
-// 		    'schemaCacheID' => 'cache',
-// 		    'schemaCachingDuration' => 3600 * 24,    // metadata 缓存超时时间(s)
+		    'schemaCacheID' => 'cache',
+		    'schemaCachingDuration' => 3600 * 24,    // metadata 缓存超时时间(s)
 // 		    'queryCacheID' => 'cache',
 // 		    'queryCachingDuration' => 60,
         ),
