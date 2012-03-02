@@ -39,6 +39,7 @@ return array(
         'application.helpers.*',
         'application.libs.*',
         'application.widgets.*',
+        'application.apis.*',
 	),
         
     'modules' => array(
