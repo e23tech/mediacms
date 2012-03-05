@@ -76,11 +76,13 @@ class Api_Post extends ApiBase
      */
     public function get_timeline(/*$page, $count=15*/)
     {
+        $cmd = app()->getDb()->createCommand()
+            ->where('state = :enabled', array(':enabled' => Post::STATE_ENABLED));
         $rows = $this->fetchPosts();
         return $rows;
     }
     
-    private function fetchPosts($cmd = null)
+    private function fetchPosts(CDbCommand $cmd)
     {
         $page = $this->param('page');
         $page = ($page === false) ? 1 : (int)$page;
@@ -88,9 +90,6 @@ class Api_Post extends ApiBase
         $count = ($count === false) ? self::COUNT_OF_PAGE : (int)$count;
         
         $offset = ($page - 1) * $count;
-        
-        if (!($cmd instanceof CDbCommand))
-            $cmd = app()->getDb()->createCommand();
         
         $fields = trim(strip_tags($this->param('fields')));
         if ($fields)
