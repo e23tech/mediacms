@@ -7,7 +7,7 @@
  */
 class ApiBase
 {
-    protected $_params;
+    private $_params;
     
     public function __construct($params)
     {
@@ -69,8 +69,16 @@ class ApiBase
     
     protected function requireLogin()
     {
-    	if (!isset($this->_params['token']) || empty($this->_params['token'])) 
+    	if (!isset($this->_params['token']) || empty($this->_params['token']))
     		throw new ApiException('此api需要用户登录', ApiError::USER_TOKEN_ERROR);
+    }
+
+    protected function param($key)
+    {
+        if (array_key_exists($key, $this->_params))
+            return $this->_params[$key];
+        else
+            return false;
     }
 }
 ?>

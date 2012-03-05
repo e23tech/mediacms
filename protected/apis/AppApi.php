@@ -67,9 +67,9 @@ class AppApi
      */
     private function checkArgs()
     {
-        $this->checkFormat()
-            ->checkApiKey()
-           ->checkSignature();
+        $this->checkFormat()->checkApiKey();
+        // @todo 暂时未检查签名
+//         $this->checkSignature();
             
         return $this;
     }
@@ -99,7 +99,7 @@ class AppApi
         foreach ($args as $key => $value)
             $args[$key] = strip_tags(trim($value));
             
-        $args['api_key'] && $this->_apikey = $args['api_key'];
+        $args['apikey'] && $this->_apikey = $args['apikey'];
         $args['format'] && $this->_format = $args['format'];
         $args['methods'] && $this->_methods = $args['methods'];
         $args['signature'] && $this->_sig = $args['signature'];
@@ -109,12 +109,13 @@ class AppApi
     
     /**
      * 检查必需的参数
+     * apikey, signature, methods 为必须有的参数
      * @throws ApiException
      * @return AppApi
      */
     private function checkRequiredArgs()
     {
-        $args = array('api_key', 'signature', 'methods');
+        $args = array('apikey', 'signature', 'methods');
         $keys = array_keys($this->_args);
         if ($keys != ($keys + $args)) {
             throw new ApiException('缺少必须的参数', ApiError::ARGS_NOT_COMPLETE);
@@ -163,7 +164,7 @@ class AppApi
             throw new ApiException('methods参数格式不正确', ApiError::METHOD_FORMAT_ERROR);
         }
         
-        $class = 'Api_' . ucfirst($class);
+        $class = 'Api_' . ucfirst(strtolower($class));
         if (!class_exists($class, false))
             self::importClass($class);
 
@@ -171,6 +172,7 @@ class AppApi
             throw new ApiException('$class 类定义不存在', ApiError::CLASS_FILE_NOT_EXIST);
             
         $object = new $class($this->_args);
+        $method = 'get_' . strtolower($method);
         if (!method_exists($object, $method))
             throw new ApiException('$method 方法不存在', ApiError::CLASS_METHOD_NOT_EXIST);
         
@@ -214,10 +216,8 @@ class AppApi
     private function makeSignature()
     {
         // @todo 签名方法未实现
-        $args = $this->_args;
-        unset($args['signature']);
-
-        return $sig;
+        $signature = md5($this->_apikey . $this->_secretKey);
+        return $signature;
     }
     
     private static function output($data, $format = 'json')

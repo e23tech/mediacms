@@ -23,8 +23,6 @@ catch (Exception $e) {
     exit(0);
 }
 
-$dbconfig = require($params['dataPath'] . DS . 'db.config.php');
-
 return array(
     'id' => $params['domain'],
     'name' => $params['sitename'],
