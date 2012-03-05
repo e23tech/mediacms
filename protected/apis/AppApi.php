@@ -172,7 +172,7 @@ class AppApi
             throw new ApiException('$class 类定义不存在', ApiError::CLASS_FILE_NOT_EXIST);
             
         $object = new $class($this->_args);
-        $method = 'get_' . strtolower($method);
+        $method = strtolower($method);
         if (!method_exists($object, $method))
             throw new ApiException('$method 方法不存在', ApiError::CLASS_METHOD_NOT_EXIST);
         
@@ -233,7 +233,7 @@ class AppApi
      */
     private static function outputJson($data)
     {
-        return json_encode($data);
+        return CJSON::encode($data);
     }
     
     /**

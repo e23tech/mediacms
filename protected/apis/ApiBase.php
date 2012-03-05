@@ -7,12 +7,11 @@
  */
 class ApiBase
 {
-    private $_params;
+    private $_appParams;
     
-    public function __construct($params)
+    public function __construct($params = array())
     {
-        unset($params['method'], $params['sig'], $params['apikey'], $params['format']);
-        $this->_params = $params;
+        $this->_appParams = $params;
     }
     
     protected static function requirePost()
@@ -39,46 +38,77 @@ class ApiBase
     
     protected function requiredParams($params)
     {
-        if (is_string($params))
-            $params = array($params);
+        if (is_string($params)) $params = array($params);
         
-        $allParams = array_keys($this->_params);
-        $diff = join('|', array_diff($params, array_intersect($params, $allParams)));
-        if ($diff) {
-            throw new ApiException("请求参数不完整，缺少参数：{$diff}", ApiError::ARGS_NOT_COMPLETE);
+        $errno = false;
+        if (request()->getIsPostRequest())
+            $method = 'getPost';
+        elseif (request()->getIsPutRequest())
+            $method = 'getPut';
+        elseif (request()->getIsDeleteRequest())
+            $method = 'getDelete';
+        else
+            $method = 'getQuery';
+        
+        foreach ($params as $param) {
+            $result = call_user_func(array($this, $method), $param);
+            if ($result === false || $result === null) {
+                $errno = true;
+                break;
+            }
+        }
+        if ($errno) {
+            throw new ApiException("请求参数不完整，缺少必要参数", ApiError::ARGS_NOT_COMPLETE);
         }
     }
     
-    protected function filterParams($params = array())
-    {
-        if (is_string($params))
-            $params = array($params);
-        elseif (is_array($params))
-            ;
-        else
-            $params = array();
-        
-        $params[] = 'debug';
-        foreach ($params as $key) {
-            if (array_key_exists($key, $this->_params))
-                $data[$key] = $this->_params[$key];
-        }
-
-        return (array)$data;
-    }
     
     protected function requireLogin()
     {
-    	if (!isset($this->_params['token']) || empty($this->_params['token']))
+        // @todo not complete
+        $token = $this->getParam('token');
+    	if (empty($token))
     		throw new ApiException('此api需要用户登录', ApiError::USER_TOKEN_ERROR);
     }
 
-    protected function param($key)
+    
+    
+    protected function getAppParam($name, $defaultValue = null)
     {
-        if (array_key_exists($key, $this->_params))
-            return $this->_params[$key];
+        if (array_key_exists($name, $this->_appParams))
+            return $this->_appParams[$name];
         else
             return false;
     }
+    
+    protected function getParam($name, $defaultValue = null)
+    {
+        return request()->getParam($name, $defaultValue);
+    }
+    
+    protected function getQuery($name, $defaultValue = null)
+    {
+        return request()->getQuery($name, $defaultValue);
+    }
+    
+    protected function getPost($name, $defaultValue = null)
+    {
+        return request()->getPost($name, $defaultValue);
+    }
+    
+    protected function getPut($name, $defaultValue = null)
+    {
+        return request()->getPut($name, $defaultValue);
+    }
+    
+    protected function getDelete($name, $defaultValue = null)
+    {
+        return request()->getDelete($name, $defaultValue);
+    }
+    
 }
-?>
+
+
+
+
+

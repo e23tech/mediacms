@@ -70,13 +70,17 @@ class ApiError
      * 用户不存在
      * @var integer
      */
-    const USER_NOT_EXIST = 1000;
+    const USER_NOT_EXIST = 1100;
     
     /**
      * 用户$token错误
      * @var integer
      */
-    const USER_TOKEN_ERROR = 10001;
+    const USER_TOKEN_ERROR = 1101;
     
-    
+    /*
+     * ******************* 以下为具体应用中的错误 ***********************************
+     */
+    const POST_SAVE_ERROR = 2000;
 }
+

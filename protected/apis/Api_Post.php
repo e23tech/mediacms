@@ -8,9 +8,13 @@ class Api_Post extends ApiBase
      * @param integer $id 文章ID
      * @return array
      */
-    public function get_one(/*$id*/)
+    public function show(/*$id*/)
     {
-        $postid = (int)$this->param('id');
+        $this->requiredParams(array('id'));
+        
+        $postid = (int)$this->getParam('id');
+        if (empty($postid)) return array();
+        
         $cmd = app()->getDb()->createCommand()
             ->from(Post::model()->tableName())
             ->where(array('and', 'id = :postid', 'state = :enabled'), array(':postid' => $postid, ':enabled' => Post::STATE_ENABLED));
@@ -32,9 +36,12 @@ class Api_Post extends ApiBase
      * @param integer $page 页码
      * @param integer $count 返回数据条数
      */
-    public function get_list_of_category(/*$categoryid, $page=0, $count=15*/)
+    public function list_of_category(/*$categoryid, $page=0, $count=15*/)
     {
-        $categoryid = (int)$this->param('categoryid');
+        $this->requiredParams(array('categoryid'));
+        
+        $categoryid = (int)$this->getParam('categoryid');
+        if (empty($categoryid)) return array();
         
         $cmd = app()->getDb()->createCommand()
             ->where(array('and', 'category_id = :categoryid', 'state = :state'), array(':categoryid'=>$categoryid, ':state'=>Post::STATE_ENABLED));
@@ -48,9 +55,12 @@ class Api_Post extends ApiBase
      * @param integer $page 页码
      * @param integer $count 返回数据条数
      */
-    public function get_list_of_topic(/*$topicid, $page=0, $count=15*/)
+    public function list_of_topic(/*$topicid, $page=0, $count=15*/)
     {
-        $topicid = (int)$this->param('topicid');
+        $this->requiredParams(array('topicid'));
+        
+        $topicid = (int)$this->getParam('topicid');
+        if (empty($topicid)) return array();
         
         $cmd = app()->getDb()->createCommand()
             ->where(array('and', 'topic_id = :topicid', 'state = :state'), array(':topicid'=>$topicid, ':state'=>Post::STATE_ENABLED));
@@ -66,7 +76,12 @@ class Api_Post extends ApiBase
      */
     public function get_list_of_special(/*$specialid, $page=0, $count=15*/)
     {
+        $this->requiredParams(array('specialid'));
         
+        $specialid = (int)$this->getParam('specialid');
+        if (empty($specialid)) return array();
+        
+        // @todo not complete
     }
     
     /**
@@ -74,7 +89,7 @@ class Api_Post extends ApiBase
      * @param integer $page 页码
      * @param integer $count 返回数据条数
      */
-    public function get_timeline(/*$page, $count=15*/)
+    public function timeline(/*$page, $count=15*/)
     {
         $cmd = app()->getDb()->createCommand()
             ->where('state = :enabled', array(':enabled' => Post::STATE_ENABLED));
@@ -82,16 +97,21 @@ class Api_Post extends ApiBase
         return $rows;
     }
     
+    /**
+     * 获取文章内容
+     * @param CDbCommand $cmd CDbCommand对象
+     * @return array
+     */
     private function fetchPosts(CDbCommand $cmd)
     {
-        $page = $this->param('page');
+        $page = $this->getParam('page');
         $page = ($page === false) ? 1 : (int)$page;
-        $count = $this->param('count');
+        $count = $this->getQuery('count');
         $count = ($count === false) ? self::COUNT_OF_PAGE : (int)$count;
         
         $offset = ($page - 1) * $count;
         
-        $fields = trim(strip_tags($this->param('fields')));
+        $fields = trim(strip_tags($this->getQuery('fields')));
         if ($fields)
             $cmd->select($fields);
         $cmd->from(Post::model()->tableName())
@@ -111,6 +131,38 @@ class Api_Post extends ApiBase
         }
         
         return $rows;
+    }
+    
+    public function create()
+    {
+//         $this->requirePost();
+        $this->requiredParams(array('content', 'user_id'));
+
+        $row['content'] = $this->getPost('content');
+        $row['title'] = mb_substr($row['content'], 0, 15, app()->charset);
+        $row['summary'] = mb_substr($row['content'], 0, 50, app()->charset);
+        $row['user_id'] = (int)$this->getPost('user_id');
+        $row['user_name'] = $this->getPost('user_name');
+        
+        $model = new Post();
+        $model->attributes = $row;
+        if ($model->save()) {
+            $this->afterCreate($model);
+            return $model;
+        }
+        else {
+            $errors = $model->getErrors();
+            foreach ($errors as $error)
+                $errstr[] = join('|', $error);
+            $errstr = join(', ', $errstr);
+            throw new ApiException('上传文章失败：' . $errstr, ApiError::POST_SAVE_ERROR);
+        }
+        
+    }
+    
+    private function afterCreate($model)
+    {
+        
     }
     
 }
