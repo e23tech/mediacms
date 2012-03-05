@@ -78,7 +78,7 @@ class Api_Post extends ApiBase
     {
         $cmd = app()->getDb()->createCommand()
             ->where('state = :enabled', array(':enabled' => Post::STATE_ENABLED));
-        $rows = $this->fetchPosts();
+        $rows = $this->fetchPosts($cmd);
         return $rows;
     }
     
