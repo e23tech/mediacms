@@ -2,6 +2,7 @@
 class Api_Post extends ApiBase
 {
     const COUNT_OF_PAGE = 15;
+    const HOTTEST_POSTS_COUNT_OF_PAGE = 5;
     
     /**
      * 获取一篇文章
@@ -97,6 +98,31 @@ class Api_Post extends ApiBase
         return $rows;
     }
     
+    public function hottest(/*$count = 5*/)
+    {
+        $count = (int)$this->getQuery('count');
+        $count = ($count < 1) ? self::HOTTEST_POSTS_COUNT_OF_PAGE : (int)$count;
+        
+        $params = array(':enabled' => Post::STATE_ENABLED, ':hottest'=>BETA_YES);
+        $cmd = app()->getDb()->createCommand()
+            ->from(Post::model()->tableName())
+            ->where(array('and', 'hottest = :hottest', 'state = :enabled'), $params)
+            ->limit($count)
+            ->order(array('create_time desc', 'id desc'));
+        
+        $rows = $cmd->queryAll();
+        
+        foreach ($rows as $index => $row) {
+            $row['create_time_text'] = date('Y-m-d H:i', $row['create_time']);
+            unset($row['create_ip'], $row['contributor_id'], $row['contributor'], $row['contributor_site'], $row['contributor_email']);
+            unset($row['hottest'], $row['recommend'], $row['istop'], $row['state']);
+            $rows[$index] = $row;
+            unset($row);
+        }
+        
+        return $rows;
+    }
+    
     /**
      * 获取文章内容
      * @param CDbCommand $cmd CDbCommand对象
@@ -104,10 +130,10 @@ class Api_Post extends ApiBase
      */
     private function fetchPosts(CDbCommand $cmd)
     {
-        $page = $this->getParam('page');
-        $page = ($page === false) ? 1 : (int)$page;
-        $count = $this->getQuery('count');
-        $count = ($count === false) ? self::COUNT_OF_PAGE : (int)$count;
+        $page = (int)$this->getParam('page');
+        $page = ($page < 1) ? 1 : (int)$page;
+        $count = (int)$this->getQuery('count');
+        $count = ($count < 1) ? self::COUNT_OF_PAGE : (int)$count;
         
         $offset = ($page - 1) * $count;
         
