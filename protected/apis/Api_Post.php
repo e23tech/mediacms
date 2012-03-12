@@ -109,7 +109,11 @@ class Api_Post extends ApiBase
             ->where(array('and', 'hottest = :hottest', 'state = :enabled'), $params)
             ->limit($count)
             ->order(array('create_time desc', 'id desc'));
-        echo $cmd->getText();
+
+        $fields = trim(strip_tags($this->getQuery('fields')));
+        if ($fields)
+            $cmd->select($fields);
+        
         $rows = $cmd->queryAll();
         
         foreach ($rows as $index => $row) {
