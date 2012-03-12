@@ -101,7 +101,7 @@ class Api_Post extends ApiBase
     public function hottest(/*$count = 5*/)
     {
         $count = (int)$this->getQuery('count');
-        $count = ($count < 1) ? self::HOTTEST_POSTS_COUNT_OF_PAGE : (int)$count;
+        $count = ($count < 1) ? self::HOTTEST_POSTS_COUNT_OF_PAGE : $count;
         
         $params = array(':enabled' => Post::STATE_ENABLED, ':hottest'=>BETA_YES);
         $cmd = app()->getDb()->createCommand()
@@ -109,7 +109,7 @@ class Api_Post extends ApiBase
             ->where(array('and', 'hottest = :hottest', 'state = :enabled'), $params)
             ->limit($count)
             ->order(array('create_time desc', 'id desc'));
-        
+        echo $cmd->getText();
         $rows = $cmd->queryAll();
         
         foreach ($rows as $index => $row) {
