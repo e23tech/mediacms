@@ -28,7 +28,10 @@ class Api_Post extends ApiBase
             $row['create_time_text'] = date('Y-m-d H:i', $row['create_time']);
             
             app()->getController()->layout = 'phone';
-            $row['content'] = app()->getController()->render('/post/iphoneshow', array('content'=>$row['content']), true);
+            $row['content'] = app()->getController()->render('/post/iphoneshow', array(
+                'content'=>$row['content'],
+                'title' => $title,
+            ), true);
         }
         
         return $row;
