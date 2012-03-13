@@ -8,7 +8,8 @@
 <meta content="black" name="apple-mobile-web-app-status-bar-style" />
 <meta content="telephone=no" name="format-detection" />
 <style type="text/css">
-img {max-width:920px;}
+.post-title {text-align:center; font-size:18px; padding:20px 0; border-bottom:1px solid gray;}
+img {max-width:600px;}
 </style>
 </head>
 <body>
