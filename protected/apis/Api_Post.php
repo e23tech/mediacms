@@ -26,6 +26,9 @@ class Api_Post extends ApiBase
             unset($row['create_ip'], $row['contributor_id'], $row['contributor'], $row['contributor_site'], $row['contributor_email']);
             unset($row['hottest'], $row['recommend'], $row['istop'], $row['state']);
             $row['create_time_text'] = date('Y-m-d H:i', $row['create_time']);
+            
+            app()->getController()->layout = 'phone';
+            $row['content'] = app()->getController()->render('/post/iphoneshow', array('content'=>$row['content']), true);
         }
         
         return $row;
