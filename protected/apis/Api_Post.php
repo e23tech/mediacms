@@ -127,6 +127,13 @@ class Api_Post extends ApiBase
         return $rows;
     }
     
+    public function hottest_latest()
+    {
+        $data['hottest'] = $this->hottest();
+        $data['latest'] = $this->timeline();
+        return $data;
+    }
+    
     /**
      * 获取文章内容
      * @param CDbCommand $cmd CDbCommand对象
