@@ -40,6 +40,16 @@
         </div>
         <div class="clear"></div>
     </div>
+    <?php if (user()->checkAccess('enterAdminSystem')):?>
+    <div class="beta-control-group <?php if ($form->hasErrors('tags')) echo 'error';?>">
+        <label class="beta-control-label"><?php echo t('tags');?></label>
+        <div class="beta-controls">
+            <?php echo CHtml::activeTextField($form, 'tags', array('class'=>'beta-text', 'id'=>'post-tags'));?>
+            <p class="beta-help-block"><?php echo $form->getError('tags');?></p>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <?php endif;?>
     <div class="beta-control-group stacked <?php if ($form->hasErrors('summary')) echo 'error';?>">
         <label class="beta-control-label"><?php echo t('summary');?>&nbsp;<span class="beta-help-inline"><?php echo $form->getError('summary');?></span></label>
         <div class="beta-controls">
@@ -92,8 +102,11 @@ $(function(){
 	$('#post-title').focus();
     KindEditor.ready(function(K) {
     	var cssurl = '<?php echo tbu('styles/beta-all.css');?>';
+    	var imageUploadUrl = '<?php echo aurl('upload/image');?>';
     	KEConfig.mini.cssPath = [cssurl];
+    	KEConfig.mini.uploadJson = imageUploadUrl;
         KEConfig.common.cssPath = [cssurl];
+        KEConfig.common.uploadJson = imageUploadUrl;
     	var betaSummary = K.create('#beta-summary', KEConfig.mini);
     	var betaContent = K.create('#beta-content', KEConfig.common);
     	$('#post-form').on('submit', {content:betaContent}, BetaPost.create);

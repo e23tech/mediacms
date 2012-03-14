@@ -8,6 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
     <link media="screen" rel="stylesheet" type="text/css" href="<?php echo tbu('styles/beta-all.css');?>" />
     <script type="text/javascript" src="<?php echo sbu('libs/jquery-1.7.1.min.js');?>"></script>
+    <?php echo param('header_html');?>
 </head>
 <body>
 <div class="beta-container">
@@ -32,15 +33,19 @@
         <div class="beta-entry">
             <?php echo $content;?>
         </div>
-    <div class="beta-footer">
-        footer
+    
+</div>
+<?php echo param('footer_before_html');?>
+<div class="beta-footer">
+    <div class="beta-container">
+        <p><?php echo t('site_announce');?></p>
+        <p><?php echo t('site_content_share_announce');?>&nbsp;&copy;2012&nbsp;<?php echo app()->name;?>&nbsp;<?php echo param('beianCode');?></p>
+        <p>Powered by <a href="http://www.24beta.com/" target="_blank">24beta.com</a></p>
     </div>
 </div>
-
 <a class="beta-backtop" href="#top"><?php echo t('return_top');?></a>
-
+<?php echo param('footer_after_html');?>
 <?php echo param('tongjiCode');?>
-
 </body>
 </html>
 
