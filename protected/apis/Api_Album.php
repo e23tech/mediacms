@@ -7,7 +7,7 @@ class Api_Album extends ApiBase
         $where = array('and', 'post_type = :posttype', 'state = :state');
         $params = array(':state'=>Post::STATE_ENABLED, ':posttype'=>Post::TYPE_ALBUM);
         $cmd = app()->getDb()->createCommand()
-            ->select(array('id, title', 'thumbnail'))
+            ->select(array('id', 'title', 'thumbnail'))
             ->from(Post::model()->tableName())
             ->order(array('create_time desc', 'id desc'))
             ->where($where, $params)
