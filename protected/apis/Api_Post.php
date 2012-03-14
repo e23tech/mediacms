@@ -50,8 +50,10 @@ class Api_Post extends ApiBase
         $categoryid = (int)$this->getParam('categoryid');
         if (empty($categoryid)) return array();
         
+        $where = array('and', 'category_id = :categoryid', 'post_type = :posttype', 'state = :state');
+        $params = array(':categoryid'=>$categoryid, ':state'=>Post::STATE_ENABLED, ':posttype'=>Post::TYPE_POST);
         $cmd = app()->getDb()->createCommand()
-            ->where(array('and', 'category_id = :categoryid', 'state = :state'), array(':categoryid'=>$categoryid, ':state'=>Post::STATE_ENABLED));
+            ->where($where, $params);
         $rows = $this->fetchPosts($cmd);
         return $rows;
     }
@@ -69,26 +71,12 @@ class Api_Post extends ApiBase
         $topicid = (int)$this->getParam('topicid');
         if (empty($topicid)) return array();
         
+        $where = array('and', 'topic_id = :topicid', 'post_type = :posttype', 'state = :state');
+        $params = array(':topicid'=>$topicid, ':state'=>Post::STATE_ENABLED, ':posttype'=>Post::TYPE_POST);
         $cmd = app()->getDb()->createCommand()
-            ->where(array('and', 'topic_id = :topicid', 'state = :state'), array(':topicid'=>$topicid, ':state'=>Post::STATE_ENABLED));
+            ->where($where, $params);
         $rows = $this->fetchPosts($cmd);
         return $rows;
-    }
-    
-    /**
-     * 获取一个热门专题的文章列表
-     * @param integer $specialid 分类ID
-     * @param integer $page 页码
-     * @param integer $count 返回数据条数
-     */
-    public function get_list_of_special(/*$specialid, $page=0, $count=15*/)
-    {
-        $this->requiredParams(array('specialid'));
-        
-        $specialid = (int)$this->getParam('specialid');
-        if (empty($specialid)) return array();
-        
-        // @todo not complete
     }
     
     /**
@@ -99,7 +87,7 @@ class Api_Post extends ApiBase
     public function timeline(/*$page, $count=15*/)
     {
         $cmd = app()->getDb()->createCommand()
-            ->where('state = :enabled', array(':enabled' => Post::STATE_ENABLED));
+            ->where('post_type = :posttype and state = :enabled', array(':enabled' => Post::STATE_ENABLED, ':posttype'=>Post::TYPE_POST));
         $rows = $this->fetchPosts($cmd);
         return $rows;
     }
@@ -109,10 +97,11 @@ class Api_Post extends ApiBase
         $count = (int)$this->getQuery('count');
         $count = ($count < 1) ? self::HOTTEST_POSTS_COUNT_OF_PAGE : $count;
         
-        $params = array(':enabled' => Post::STATE_ENABLED, ':hottest'=>BETA_YES);
+        $where = array('and', 'hottest = :hottest', 'state = :enabled', 'post_type = :posttype');
+        $params = array(':enabled' => Post::STATE_ENABLED, ':hottest'=>BETA_YES, ':posttype'=>Post::TYPE_POST);
         $cmd = app()->getDb()->createCommand()
             ->from(Post::model()->tableName())
-            ->where(array('and', 'hottest = :hottest', 'state = :enabled'), $params)
+            ->where($where, $params)
             ->limit($count)
             ->order(array('create_time desc', 'id desc'));
 
