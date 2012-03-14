@@ -59,6 +59,7 @@ return array(
     'tags_rules' => '标签多间使用英文半角逗号(,)分隔',
     'options' => '选项',
     'state_show' => '显示',
+    'home_show' => '首页',
     'save_post_success' => '{title}&nbsp;发表成功，<a href="{url}" target="_blank">点击查看</a>',
 
     /* create topic */
@@ -117,18 +118,39 @@ return array(
     'search_posts' => '搜索文章',
     'hottest_posts' => '热门文章',
     'editor_recommend_posts' => '编辑推荐',
+    'home_show_posts' => '首页推荐',
     'set_recommend_post' => '推荐文章',
     'cancel_recommend_post' => '取消推荐',
     'set_hottest_post' => '热门',
     'cancel_hottest_post' => '取消热门',
     'has_deleted_posts' => '已删除',
     'delete_success' => '删除成功',
+    'set_homeshow_post' => '首页显示',
+    'cannel_homeshow_post' => '取消首页显示',
+    'attachment' => '附件',
 
     'select_all' => '全选',
     'reverse_select' => '反选',
     'pass_review' => '通过',
     'sethottest' => '热门',
     'setrecommend' => '推荐',
+        
+    /* user manager */
+    'user_is_not_exist' => '该用户不存在',
+    'reset_user_passwd' => '重置用户密码',
+    'user_resetpwd_success' => '修改{name}密码成功',
+        
+    /* config manage */
+    'custome_config_params' => '自定义参数',
+    'system_config_params' => '系统功能',
+    'display_config_params' => '网站显示',
+    'ui_config_params' => '界面元素',
+    'performance_config_params' => '性能相关',
+    'sns_config_params' => '社会化分享',
+    'view_config_params' => '查看配置参数',
+    'edit_config_params' => '编辑配置参数',
+    'the_following_names_error' => '以下参数保存出错',
+    'cofig_save_success' => '配置参数保存成功',
 
 );
 
