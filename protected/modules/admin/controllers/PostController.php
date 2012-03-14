@@ -15,7 +15,7 @@ class PostController extends Controller
         );
     }
     
-	public function actionCreate($id = 0)
+	public function actionCreatePost($id = 0)
 	{
 	    $id = (int)$id;
 	    if ($id === 0) {
@@ -29,6 +29,7 @@ class PostController extends Controller
 	    
 	    if (request()->getIsPostRequest() && isset($_POST['AdminPost'])) {
 	        $model->attributes = $_POST['AdminPost'];
+	        $model->post_type = AdminPost::TYPE_POST;
 	        if ($model->save()) {
 	            user()->setFlash('save_post_result', t('save_post_success', 'admin', array('{title}'=>$model->title, '{url}'=>$model->url)));
 	            $this->redirect(request()->getUrl());
@@ -91,7 +92,7 @@ class PostController extends Controller
 	    else {
 	        $data = array(
 	            'errno' => BETA_NO,
-	            'label' => t($model->state == AdminPost::STATE_DISABLED ? 'setshow' : 'sethide', 'admin')
+	            'label' => t($model->state == AdminPost::STATE_ENABLED ? 'sethide' : 'setshow', 'admin')
 	        );
 	        echo $callback . '(' . CJSON::encode($data) . ')';
 	        exit(0);
@@ -111,6 +112,15 @@ class PostController extends Controller
 	{
 	    $criteria = new CDbCriteria();
 	    $criteria->addColumnCondition(array('recommend'=>BETA_YES));
+	    $data = AdminPost::fetchList($criteria);
+	     
+	    $this->render('list', $data);
+	}
+	
+	public function actionHomeshow()
+	{
+	    $criteria = new CDbCriteria();
+	    $criteria->addColumnCondition(array('homeshow'=>BETA_YES));
 	    $data = AdminPost::fetchList($criteria);
 	     
 	    $this->render('list', $data);
@@ -140,7 +150,7 @@ class PostController extends Controller
 	    else {
 	        $data = array(
 	            'errno' => BETA_NO,
-	            'label' => t($model->hottest == BETA_YES ? 'set_hottest_post' : 'cancel_hottest_post', 'admin')
+	            'label' => t($model->hottest == BETA_YES ? 'cancel_hottest_post' : 'set_hottest_post', 'admin')
 	        );
 	        echo $callback . '(' . CJSON::encode($data) . ')';
 	        exit(0);
@@ -161,7 +171,28 @@ class PostController extends Controller
 	    else {
 	        $data = array(
 	            'errno' => BETA_NO,
-	            'label' => t($model->recommend == BETA_YES ? 'set_recommend_post' : 'cancel_recommend_post', 'admin')
+	            'label' => t($model->recommend == BETA_YES ? 'cancel_recommend_post' : 'set_recommend_post', 'admin')
+	        );
+	        echo $callback . '(' . CJSON::encode($data) . ')';
+	        exit(0);
+	    }
+	}
+
+	public function actionSetHomeshow($id, $callback)
+	{
+	    $id = (int)$id;
+	    $model = AdminPost::model()->findByPk($id);
+	    if ($model === null)
+	        throw new CHttpException(500);
+	     
+	    $model->homeshow = abs($model->homeshow - BETA_YES);
+	    $model->save(true, array('homeshow'));
+	    if ($model->hasErrors())
+	        throw new CHttpException(500);
+	    else {
+	        $data = array(
+	            'errno' => BETA_NO,
+	            'label' => t($model->homeshow == BETA_YES ? 'cannel_homeshow_post' : 'set_homeshow_post', 'admin')
 	        );
 	        echo $callback . '(' . CJSON::encode($data) . ')';
 	        exit(0);

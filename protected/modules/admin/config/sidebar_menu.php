@@ -10,7 +10,7 @@ return array(
         'url' => 'javascript:void(0);',
         'htmlOptions' => array('target'=>'main'),
         'subs' => array(
-            array('title'=>t('new_post', 'admin'), 'url'=>url('admin/post/create'), 'htmlOptions'=>array('target'=>'main')),
+            array('title'=>t('new_post', 'admin'), 'url'=>url('admin/post/createpost'), 'htmlOptions'=>array('target'=>'main')),
             array('title'=>t('verify', 'admin'), 'url'=>url('admin/post/verify'), 'htmlOptions'=>array('target'=>'main')),
             array('title'=>t('today', 'admin'), 'url'=>url('admin/post/today'), 'htmlOptions'=>array('target'=>'main')),
             array('title'=>t('query_post', 'admin'), 'url'=>url('admin/post/search'), 'htmlOptions'=>array('target'=>'main')),
@@ -18,6 +18,7 @@ return array(
             array('title'=>t('post_topic', 'admin'), 'url'=>url('admin/topic/index'), 'htmlOptions'=>array('target'=>'main')),
             array('title'=>t('post_tag', 'admin'), 'url'=>url('admin/tag/index'), 'htmlOptions'=>array('target'=>'main')),
             array('title' => t('comment_manage', 'admin'), 'url' => url('admin/comment/index'), 'htmlOptions' => array('target'=>'main')),
+            array('title' => t('attachment', 'admin'), 'url' => url('admin/upload/index'), 'htmlOptions' => array('target'=>'main')),
         )
     ),
     array(
@@ -32,7 +33,7 @@ return array(
     ),
     array(
         'title' => t('system_setting', 'admin'),
-        'url' => url('admin/setting/index'),
+        'url' => url('admin/config/view', array('categoryid'=>AdminConfig::CATEGORY_SYSTEM)),
         'htmlOptions' => array('target'=>'main'),
     ),
     array(
