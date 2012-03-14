@@ -114,6 +114,8 @@ class SiteController extends Controller
     {
         user()->logout();
         user()->clearStates();
+        app()->session->clear();
+        app()->session->destroy();
         $this->redirect(app()->homeUrl);
     }
     
@@ -127,7 +129,7 @@ class SiteController extends Controller
         $criteria = new CDbCriteria();
         $criteria->order = 't.istop desc, t.create_time desc, t.id desc';
         $criteria->limit = param('postCountOfPage');
-        $criteria->scopes = 'published';
+        $criteria->scopes = array('published', 'homeshow');
 
         $count = Post::model()->count($criteria);
         $pages = new CPagination($count);
@@ -191,7 +193,7 @@ class SiteController extends Controller
         $role->addChild('deletePost');
          
         $auth->assign('admin','1');
-        $auth->assign('author','2');
+//         $auth->assign('author','2');
         
 
     }
