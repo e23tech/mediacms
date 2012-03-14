@@ -13,11 +13,12 @@ class PostForm extends CFormModel
     public $contributor_site;
     public $tags;
     public $captcha;
+    public $token;
     
     public function rules()
     {
         return array(
-            array('title, content', 'required'),
+            array('title, summary, content', 'required'),
             array('category_id, topic_id', 'numerical', 'integerOnly'=>true),
 			array('contributor', 'length', 'max'=>50),
 	        array('contributor_email, contributor_site, source, tags', 'length', 'max'=>250),
@@ -50,21 +51,34 @@ class PostForm extends CFormModel
     {
         $post = new Post();
         $post->attributes = $this->attributes;
+        $post->post_type = Post::TYPE_POST;
         $post->contributor_id = (int)user()->id;
         $post->state = $this->state();
+        $post->homeshow = $this->homeshow();
         $post->save();
-        $this->afterSave();
+        $this->afterSave($post);
         return $post;
     }
     
     public function state()
     {
-        return Post::STATE_DISABLED;
+        return user()->checkAccess('enterAdminSystem') ? Post::STATE_ENABLED : Post::STATE_DISABLED;
+    }
+    
+    public function homeshow()
+    {
+        return user()->checkAccess('enterAdminSystem') ? BETA_YES : param('defaultPostShowHomePage');
     }
         
-    public function afterSave()
+    public function afterSave(Post $post)
     {
-        
+        $key = param('sess_post_create_token');
+        if (app()->session->contains($key)) {
+            $token = app()->session[$key];
+            $attributes = array('post_id'=>$post->id, 'token'=>'');
+            Upload::model()->updateAll($attributes, 'token = :token', array(':token'=>$token));
+            app()->session->remove($key);
+        }
     }
     
     public function captchaAllowEmpty()

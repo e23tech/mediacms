@@ -5,6 +5,7 @@
  *
  * The followings are the available columns in table '{{post}}':
  * @property integer $id
+ * @property integer $post_type
  * @property integer $category_id
  * @property integer $topic_id
  * @property string $title
@@ -24,6 +25,7 @@
  * @property integer $disable_comment
  * @property integer $recommend
  * @property integer $hottest
+ * @property integer $homeshow
  * @property string $thumbnail
  * @property string $summary
  * @property string $content
@@ -56,6 +58,18 @@ class Post extends CActiveRecord
     const STATE_DISABLED = 0;
     const STATE_ENABLED = 1;
     
+    /*
+     * post type
+     * 0 post
+     * 1 vote
+     * 2 album
+     * 3 goods
+     */
+    const TYPE_POST = 0;
+    const TYPE_VOTE = 1;
+    const TYPE_ALBUM = 2;
+    const TYPE_GOODS = 3;
+    
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return Post the static model class
@@ -82,10 +96,12 @@ class Post extends CActiveRecord
 		// will receive user inputs.
 		return array(
 	        array('title, summary, content', 'required'),
-	        array('category_id, topic_id, score_nums, comment_nums, digg_nums, visit_nums, user_id, create_time, state, istop, disable_comment, contributor_id, recommend, hottest', 'numerical', 'integerOnly'=>true),
+	        array('post_type, category_id, topic_id, score_nums, comment_nums, digg_nums, visit_nums, user_id, create_time, state, istop, homeshow, disable_comment, contributor_id, recommend, hottest', 'numerical', 'integerOnly'=>true),
 			array('thumbnail, source, title, tags, contributor_site, contributor_email', 'length', 'max'=>250),
 			array('create_ip', 'length', 'max'=>15),
 			array('user_name, contributor', 'length', 'max'=>50),
+	        array('contributor_site', 'url'),
+	        array('contributor_email', 'email'),
 			array('summary, content', 'safe'),
 		);
 	}
@@ -95,11 +111,35 @@ class Post extends CActiveRecord
 	 */
 	public function relations()
 	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
 		return array(
 	        'category'=>array(self::BELONGS_TO, 'Category', 'category_id'),
 	        'topic'=>array(self::BELONGS_TO, 'Topic', 'topic_id'),
+		    'uploadCount' => array(self::STAT, 'Upload', 'post_id'),
+		    'picture' => array(self::HAS_MANY, 'Upload', 'post_id',
+		        'condition' => 'file_type = :filetype',
+		        'params' => array(':filetype' => Upload::TYPE_PICTURE),
+		        'order' => 'id asc',
+		    ),
+		    'pictureCount' => array(self::STAT, 'Upload', 'post_id',
+		        'condition' => 'file_type = :filetype',
+		        'params' => array(':filetype' => Upload::TYPE_PICTURE),
+		    ),
+		    'audio' => array(self::HAS_MANY, 'Upload', 'post_id',
+		        'condition' => 'file_type = :filetype',
+		        'params' => array(':filetype' => Upload::TYPE_AUDIO),
+		        'order' => 'id asc',
+		    ),
+		    'video' => array(self::HAS_MANY, 'Upload', 'post_id',
+		        'condition' => 'file_type = :filetype',
+		        'params' => array(':filetype' => Upload::TYPE_VIDEO),
+		        'order' => 'id asc',
+		    ),
+		    'downfile' => array(self::HAS_MANY, 'Upload', 'post_id',
+		        'condition' => 'file_type = :filetype',
+		        'params' => array(':filetype' => Upload::TYPE_FILE),
+		        'order' => 'id asc',
+		    ),
+		    
 		);
 	}
 
@@ -110,6 +150,7 @@ class Post extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
+            'post_type' => t('post_type'),
 			'category_id' => t('category'),
 			'topic_id' => t('topic'),
 			'title' => t('title'),
@@ -142,6 +183,9 @@ class Post extends CActiveRecord
 	public function scopes()
 	{
 	    return array(
+            'homeshow' => array(
+                'condition' => 't.homeshow = ' . BETA_YES,
+            ),
             'published' => array(
                 'condition' => 't.state = ' . self::STATE_ENABLED,
             ),
@@ -212,10 +256,13 @@ class Post extends CActiveRecord
 	{
 	    if (empty($this->source)) return '';
 	    
+	    $textLen = 50;
+	    $text = mb_strimwidth($this->source, 0, $textLen, '...', app()->charset);
+	    
 	    if (strpos($this->source, 'http://') === false && strpos($this->source, 'https://') === false)
-	        $source = $this->source;
+	        $source = $text;
 	    else
-	        $source = l($this->source, $this->source, array('target'=>'_blank', 'class'=>'post-source'));
+	        $source = l($text, $this->source, array('target'=>'_blank', 'class'=>'post-source'));
 	    
 	    return $source;
 	}
@@ -257,52 +304,6 @@ class Post extends CActiveRecord
 	    return mb_strimwidth($this->title, 0, $len, '...', app()->charset);
 	}
 	
-	protected function beforeSave()
-	{
-	    if ($this->getIsNewRecord()) {
-	        $this->title = strip_tags($this->title);
-	        $this->create_time = $_SERVER['REQUEST_TIME'];
-	        $this->create_ip = request()->getUserHostAddress();
-	        $this->source = strip_tags(trim($this->source));
-	    }
-	    $this->state = $this->state ? self::STATE_ENABLED : self::STATE_DISABLED;
-	    return true;
-	}
-	
-	protected function afterSave()
-	{
-	    $counters = array('post_nums' => 1);
-	    Category::model()->updateCounters($counters, 'id = :cid', array(':cid'=>$this->category_id));
-	    Topic::model()->updateCounters($counters, 'id = :tid', array(':tid'=>$this->topic_id));
-	    
-	    // @todo 此处还要处理tag的保存
-	}
-	
-	protected function afterDelete()
-	{
-	    $counters = array('post_nums' => -1);
-	    Category::model()->updateCounters($counters, 'id = :cid', array(':cid'=>$this->category_id));
-	    Topic::model()->updateCounters($counters, 'id = :tid', array(':tid'=>$this->topic_id));
-	    
-	    $comments = Comment::model()->findAll('post_id = :pid', array(':pid'=>$this->id));
-	    foreach ($comments as $c) $c->delete();
-	    
-	    app()->db->createCommand()->delete('{{post2tag}}', 'post_id = :pid', array(':pid'=>$this->id));
-	    app()->db->createCommand()->delete('{{special2post}}', 'post_id = :pid', array(':pid'=>$this->id));
-	    
-	    // @todo 此处删除文章后对应的图片也应该删除
-	}
-
-	protected function afterFind()
-	{
-	    if (empty($this->summary)) {
-	        $content = strip_tags($this->content, param('summaryHtmlTags'));
-	        $this->summary = mb_strimwidth($content, 0, param('subSummaryLen'), '...', app()->charset);
-	    }
-	    else
-	        $this->summary = strip_tags($this->summary, param('summaryHtmlTags'));
-	}
-	
 	public function getSubSummary($len)
 	{
 	    $len = (int)$len;
@@ -322,14 +323,14 @@ class Post extends CActiveRecord
 	    return Tag::filterTagsArray($this->tags);
 	}
 	
-	public function getTagText()
+	public function getTagText($operator = ',')
 	{
 	    $tagsArray = $this->getTagArray();
 	     
-	    return (empty($tagsArray)) ? '' : join(',', $tagsArray);
+	    return (empty($tagsArray)) ? '' : join($operator, $tagsArray);
 	}
 	
-	public function getTagLinks($operator = '', $target = '_blank', $class='beta-tag')
+	public function getTagLinks($operator = ',', $target = '_blank', $class='beta-tag')
 	{
 	    $tags = $this->getTagArray();
 	    if (empty($tags)) return '';
@@ -337,7 +338,7 @@ class Post extends CActiveRecord
 	    foreach ($tags as $tag)
 	        $data[] = l($tag, aurl('tag/posts', array('name'=>urlencode($tag))), array('target'=>$target, 'class'=>$class));
 	    
-	    return t('tags') . ':' . implode($operator, $data);
+	    return join($operator, $data);
 	}
 
 	public function getThumbnailUrl()
@@ -380,6 +381,60 @@ class Post extends CActiveRecord
 	public function getShowExtraInfo()
 	{
 	    return t('post_show_extra', 'main', array('{author}'=>$this->authorName, '{time}'=>$this->createTime, '{visit}'=>$this->visit_nums, '{digg}'=>$this->digg_nums));
+	}
+
+	protected function beforeSave()
+	{
+	    if ($this->getIsNewRecord()) {
+	        $this->title = strip_tags($this->title);
+	        $this->create_time = $_SERVER['REQUEST_TIME'];
+	        $this->create_ip = request()->getUserHostAddress();
+	        $this->source = strip_tags(trim($this->source));
+	    }
+	    $this->state = $this->state ? self::STATE_ENABLED : self::STATE_DISABLED;
+	    if ($this->tags) {
+    	    $tags = str_replace('，', ',', $this->tags);
+    	    $this->tags = trim(trim($tags), ',');
+	    }
+	    return true;
+	}
+	
+	protected function afterSave()
+	{
+	    $counters = array('post_nums' => 1);
+	    Category::model()->updateCounters($counters, 'id = :cid', array(':cid'=>$this->category_id));
+	    Topic::model()->updateCounters($counters, 'id = :tid', array(':tid'=>$this->topic_id));
+        
+	    if ($this->getIsNewRecord()) {
+	        Tag::savePostTags($this->id, $this->tags);
+	    }
+	}
+	
+	protected function afterDelete()
+	{
+	    $counters = array('post_nums' => -1);
+	    Category::model()->updateCounters($counters, 'id = :cid', array(':cid'=>$this->category_id));
+	    Topic::model()->updateCounters($counters, 'id = :tid', array(':tid'=>$this->topic_id));
+	     
+	    $comments = Comment::model()->findAllByAttributes(array('post_id'=>$this->id));
+	    foreach ($comments as $c) $c->delete();
+	     
+	    app()->db->createCommand()->delete('{{post2tag}}', 'post_id = :pid', array(':pid'=>$this->id));
+	    app()->db->createCommand()->delete('{{special2post}}', 'post_id = :pid', array(':pid'=>$this->id));
+	     
+	    // @todo 此处删除文章后对应的图片也应该删除
+	    $files = Upload::model()->findAllByAttributes(array('post_id'=>$this->id));
+	    foreach ($files as $file) $file->delete();
+	}
+	
+	protected function afterFind()
+	{
+	    if (empty($this->summary)) {
+	        $content = strip_tags($this->content, param('summaryHtmlTags'));
+	        $this->summary = mb_strimwidth($content, 0, param('subSummaryLen'), '...', app()->charset);
+	    }
+	    else
+	        $this->summary = strip_tags($this->summary, param('summaryHtmlTags'));
 	}
 }
 
