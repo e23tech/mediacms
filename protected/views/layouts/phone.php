@@ -8,9 +8,9 @@
 <meta content="black" name="apple-mobile-web-app-status-bar-style" />
 <meta content="telephone=no" name="format-detection" />
 <style type="text/css">
-body {font-size:16px; line-height:24px; color:#333; background:#EFEFEF; margin:0; padding:0;}
-.phone-container {background:white; padding:7px;margin:5px;}
-.post-title {text-align:center; font-size:20px; padding:10px 0 20px 0; border-bottom:1px solid #DFDFDF;}
+body {font-size:16px; line-height:24px; color:#333; background:#EFEFEF; margin:0; padding:0; width:100%; height:100%;}
+.phone-container {background:white; padding:7px;margin:7px; height:100%;}
+.post-title {text-align:center; font-size:20px; padding:10px 0 20px 0; margin:0; border-bottom:1px solid #DFDFDF;}
 .phone-container img {max-width:300px;}
 </style>
 </head>
