@@ -10,7 +10,7 @@
 <style type="text/css">
 body {font-size:16px; line-height:24px; color:#333; background:#EFEFEF; margin:0; padding:0; width:100%; height:100%;}
 .phone-container {background:white; padding:7px;margin:7px; height:100%;}
-.post-title {text-align:center; font-size:20px; padding:10px 0 15px 0; margin:0; border-bottom:1px solid #DFDFDF; text-shadow:-1px -1px #DFDFDF;}
+.post-title {text-align:center; font-size:20px; padding:10px 0 15px 0; margin:0; border-bottom:1px solid #DFDFDF; text-shadow:1px 1px #DFDFDF;}
 .phone-container img {max-width:300px;}
 </style>
 </head>
