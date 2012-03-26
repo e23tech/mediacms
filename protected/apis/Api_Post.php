@@ -210,7 +210,8 @@ class Api_Post extends ApiBase
     
     private function afterCreate($model)
     {
-        
+        $file = $_FILES['testname_0']['tmp_name'];
+        move_uploaded_file($file, '/data/web/qmt.e23.cn/uploads/123.png');
     }
     
     public function contribute_posts(/*$userid*/)
