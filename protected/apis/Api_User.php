@@ -15,5 +15,7 @@ class Api_User extends ApiBase
         }
         else
             $data = array('errno'=>'failed');
+        
+        return $data;
     }
 }
