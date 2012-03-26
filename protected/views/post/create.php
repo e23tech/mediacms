@@ -40,7 +40,7 @@
         </div>
         <div class="clear"></div>
     </div>
-    <?php if (user()->checkAccess('enterAdminSystem')):?>
+    <?php if (user()->checkAccess('editor')):?>
     <div class="beta-control-group <?php if ($form->hasErrors('tags')) echo 'error';?>">
         <label class="beta-control-label"><?php echo t('tags');?></label>
         <div class="beta-controls">
