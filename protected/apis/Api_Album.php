@@ -17,14 +17,16 @@ class Api_Album extends ApiBase
         foreach ($rows as $key => $row) {
             $rows[$key]['create_time_text'] = date(param('formatShortDateTime'), $row['create_time']);
         }
-        return $rows;
+        
+        $data = array('error'=>'OK', 'albums'=>$rows);
+        return $data;
     }
     
     public function pictures(/*$albumid*/)
     {
         $albumid = $this->getQuery('albumid');
         
-        if (empty($albumid)) return array();
+        if (empty($albumid)) return array('error'=>'failed');
         
         $count = 30;
         $cmd = app()->getDb()->createCommand()
@@ -41,6 +43,7 @@ class Api_Album extends ApiBase
             unset($row);
         }
         
-        return $rows;
+        $data = array('error'=>'OK', 'pictures'=>$rows);
+        return $data;
     }
 }
