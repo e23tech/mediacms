@@ -11,18 +11,18 @@ class Api_User extends ApiBase
             if ($identity->authenticate()) {
                 $user = app()->getDb()->createCommand()
                     ->from('{{user}}')
-                    ->where('name = :uesrname', array(':username'=>$username))
+                    ->where('email = :uesrname', array(':username'=>$username))
                     ->queryRow();
                 $data = array(
-                    'errno'=>'OK',
+                    'error'=>'OK',
                     'userinfo' => $user,
                 );
             }
             else
-                $data = array('errno'=>'failed');
+                $data = array('error'=>'failed');
         }
         else
-            $data = array('errno'=>'failed');
+            $data = array('error'=>'failed');
         
         return $data;
     }
