@@ -54,7 +54,8 @@ return array(
             'routes'=>array(
                 array(
                     'class'=>'CFileLogRoute',
-                    'categories'=>'system.db.*',
+                    'levels'=>'trace,info,error,notic',
+                    'categories'=>'system.*',
                 ),
                 /* array(
                     'class'=>'CWebLogRoute',

@@ -158,7 +158,7 @@ class Api_Post extends ApiBase
             ->offset($offset)
             ->order(array('create_time desc', 'id desc'));
         
-//         echo $cmd->getText();
+        
         $rows = $cmd->queryAll();
         
         foreach ($rows as $index => $row) {
@@ -211,6 +211,25 @@ class Api_Post extends ApiBase
         
     }
     
+    public function contribute_posts(/*$userid*/)
+    {
+        $userid = (int)$this->getQuery('userid');
+
+        if ($userid <= 0) {
+            $data = array('errno'=>'failed');
+            return $data;
+        }
+        
+        $where = array('and', 'contributor_id=:userid',  'post_type=:posttype');
+        $params = array(':userid' => $userid, ':posttype'=>Post::TYPE_POST);
+        
+        $cmd = app()->getDb()->createCommand()
+            ->from('{{post}}')
+            ->where($where, $params);
+        
+        $rows = $this->fetchPosts($cmd);
+        return $rows;
+    }
 }
 
 
