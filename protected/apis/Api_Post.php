@@ -216,7 +216,7 @@ class Api_Post extends ApiBase
         $userid = (int)$this->getQuery('userid');
 
         if ($userid <= 0) {
-            $data = array('errno'=>'failed');
+            $data = array('error'=>'failed');
             return $data;
         }
         
@@ -228,6 +228,11 @@ class Api_Post extends ApiBase
             ->where($where, $params);
         
         $rows = $this->fetchPosts($cmd);
+        
+        $data = array(
+            'error' => 'OK',
+            'posts' => $rows,
+        );
         return $rows;
     }
 }
