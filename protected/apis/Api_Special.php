@@ -19,7 +19,7 @@ class Api_Special extends ApiBase
     {
         $sid = $this->getQuery('specialid');
         
-        if (empty($sid)) return array();
+        if (empty($sid)) return array('error'=>'failed');
         
         $count = 40;
         $cmd = app()->getDb()->createCommand()
@@ -47,6 +47,7 @@ class Api_Special extends ApiBase
             unset($row);
         }
         
-        return $rows;
+        $data = array('error'=>'OK', 'posts'=>$rows);
+        return $data;
     }
 }
