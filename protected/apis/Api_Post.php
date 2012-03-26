@@ -233,7 +233,7 @@ class Api_Post extends ApiBase
             'error' => 'OK',
             'posts' => $rows,
         );
-        return $rows;
+        return $data;
     }
 }
 
