@@ -217,8 +217,8 @@ class Api_Post extends ApiBase
     private function afterCreate($model)
     {
         $errorCount = 0;
-        $uploads = CUploadedFile::getInstancesByName('post_files');
-        foreach ($uploads as $upload) {
+        foreach ($_FILES as $key => $file) {
+            $upload = CUploadedFile::getInstanceByName($key);
             $result = $this->uploadFile($model, $upload, Upload::TYPE_PICTURE, 'images');
             if (!$result)
                 $errorCount++;
