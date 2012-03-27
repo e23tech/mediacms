@@ -184,9 +184,7 @@ class Api_Post extends ApiBase
         $this->requirePost();
         $this->requiredParams(array('content', 'user_id'));
 
-        $file = var_export($_FILES, true);
-        
-        $row['content'] = $this->getPost('content') . $file;
+        $row['content'] = $this->getPost('content');
         $row['title'] = mb_substr($row['content'], 0, 15, app()->charset);
         $row['summary'] = mb_substr($row['content'], 0, 50, app()->charset);
         $row['contributor_id'] = (int)$this->getPost('user_id');
