@@ -189,7 +189,7 @@ class Api_Post extends ApiBase
         $row['content'] = $this->getPost('content') . $file;
         $row['title'] = mb_substr($row['content'], 0, 15, app()->charset);
         $row['summary'] = mb_substr($row['content'], 0, 50, app()->charset);
-        $row['user_id'] = (int)$this->getPost('user_id');
+        $row['contributor_id'] = (int)$this->getPost('user_id');
         $row['user_name'] = $this->getPost('user_name');
         
         $model = new Post();
