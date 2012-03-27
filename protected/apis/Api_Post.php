@@ -214,12 +214,12 @@ class Api_Post extends ApiBase
         return $data;
     }
     
-    private function afterCreate($model)
+    private function afterCreate(Post $model)
     {
         $errorCount = 0;
         foreach ($_FILES as $key => $file) {
             $upload = CUploadedFile::getInstanceByName($key);
-            $result = $this->uploadFile($model, $upload, Upload::TYPE_PICTURE, 'images');
+            $result = $this->uploadFile($model->id, $upload, Upload::TYPE_PICTURE, 'images');
             if (!$result)
                 $errorCount++;
         }
@@ -227,27 +227,25 @@ class Api_Post extends ApiBase
         return $errorCount;
     }
     
-    private function uploadFile(Post $model, CUploadedFile $upload, $fileType = Upload::TYPE_PICTURE, $additional = null)
+    private function uploadFile($postid, CUploadedFile $upload, $fileType = Upload::TYPE_PICTURE, $additional = null)
     {
         $file = BetaBase::makeUploadFilePath($upload->extensionName, $additional);
         $filePath = $file['path'];
-        if ($upload->saveAs($filePath, $deleteTempFile) && $this->afterUploaded($model, $upload, $file, $fileType))
+        if ($upload->saveAs($filePath, $deleteTempFile) && $this->afterUploaded($postid, $upload, $file, $fileType))
             return true;
         else
             return false;
     }
     
-    private function afterUploaded(Post $model, CUploadedFile $upload, $file, $fileType = Upload::TYPE_PICTURE)
+    private function afterUploaded($postid, CUploadedFile $upload, $file, $fileType = Upload::TYPE_PICTURE)
     {
         $model = new Upload();
-        $model->post_id = $model->id;
+        $model->post_id = $postid;
         $model->file_type = $fileType;
         $model->url = $file['url'];
         $model->user_id = (int)$this->getPost('user_id');
         $model->token = '';
         $result = $model->save();
-        $filename = app()->runtimePath . '/test.log';
-        file_put_contents($filename, var_export($model->getErrors(), true));
         return $result;
     }
     
