@@ -195,23 +195,57 @@ class Api_Post extends ApiBase
         $model = new Post();
         $model->attributes = $row;
         if ($model->save()) {
-            $this->afterCreate($model);
-            return $model;
+            $result = $this->afterCreate($model);
+            $data = array(
+                'error' => 'OK',
+                'fileError' => $result,
+            );
         }
         else {
             $errors = $model->getErrors();
             foreach ($errors as $error)
                 $errstr[] = join('|', $error);
             $errstr = join(', ', $errstr);
-            throw new ApiException('上传文章失败：' . $errstr, ApiError::POST_SAVE_ERROR);
+            $data = array(
+                'error' => $errstr,
+            );
         }
         
+        return $data;
     }
     
     private function afterCreate($model)
     {
-        $file = $_FILES['testname_0']['tmp_name'];
-        move_uploaded_file($file, '/data/web/qmt.e23.cn/uploads/123.png');
+        $errorCount = 0;
+        $uploads = CUploadedFile::getInstancesByName('post_files');
+        foreach ($uploads as $upload) {
+            $result = $this->uploadFile($model, $upload, Upload::TYPE_PICTURE, 'images');
+            if (!$result)
+                $errorCount++;
+        }
+        
+        return $errorCount;
+    }
+    
+    private function uploadFile(Post $model, CUploadedFile $upload, $fileType = Upload::TYPE_PICTURE, $additional = null)
+    {
+        $file = BetaBase::makeUploadFilePath($upload->extensionName, 'images');
+        $filePath = $file['path'];
+        if ($upload->saveAs($filePath, $deleteTempFile) && $this->afterUploaded($upload, $file, $fileType))
+            return true;
+        else
+            return false;
+    }
+    
+    private function afterUploaded(Post $model, CUploadedFile $upload, $file, $fileType = Upload::TYPE_PICTURE)
+    {
+        $model = new Upload();
+        $model->post_id = $model->id;
+        $model->file_type = $fileType;
+        $model->url = $file['url'];
+        $model->user_id = (int)user()->id;
+        $model->token = $postCreatetoken;
+        return $model->save();
     }
     
     public function contribute_posts(/*$userid*/)
