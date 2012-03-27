@@ -229,7 +229,7 @@ class Api_Post extends ApiBase
     
     private function uploadFile(Post $model, CUploadedFile $upload, $fileType = Upload::TYPE_PICTURE, $additional = null)
     {
-        $file = BetaBase::makeUploadFilePath($upload->extensionName, 'images');
+        $file = BetaBase::makeUploadFilePath($upload->extensionName, $additional);
         $filePath = $file['path'];
         if ($upload->saveAs($filePath, $deleteTempFile) && $this->afterUploaded($model, $upload, $file, $fileType))
             return true;
@@ -243,9 +243,12 @@ class Api_Post extends ApiBase
         $model->post_id = $model->id;
         $model->file_type = $fileType;
         $model->url = $file['url'];
-        $model->user_id = (int)user()->id;
-        $model->token = $postCreatetoken;
-        return $model->save();
+        $model->user_id = (int)$this->getPost('user_id');
+        $model->token = '';
+        $result = $model->save();
+        $filename = app()->runtimePath . '/test.log';
+        file_put_contents($filename, var_export($model->getErrors(), true));
+        return $result;
     }
     
     public function contribute_posts(/*$userid*/)
