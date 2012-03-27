@@ -231,7 +231,7 @@ class Api_Post extends ApiBase
     {
         $file = BetaBase::makeUploadFilePath($upload->extensionName, 'images');
         $filePath = $file['path'];
-        if ($upload->saveAs($filePath, $deleteTempFile) && $this->afterUploaded($upload, $file, $fileType))
+        if ($upload->saveAs($filePath, $deleteTempFile) && $this->afterUploaded($model, $upload, $file, $fileType))
             return true;
         else
             return false;
