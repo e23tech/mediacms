@@ -141,7 +141,7 @@ class Api_Post extends ApiBase
      * @param CDbCommand $cmd CDbCommand对象
      * @return array
      */
-    private function fetchPosts(CDbCommand $cmd)
+    private function fetchPosts(CDbCommand $cmd, $makeContentPageHtml = true)
     {
         $page = (int)$this->getParam('page');
         $page = ($page < 1) ? 1 : (int)$page;
@@ -166,11 +166,13 @@ class Api_Post extends ApiBase
             unset($row['create_ip'], $row['contributor_id'], $row['contributor'], $row['contributor_site'], $row['contributor_email']);
             unset($row['hottest'], $row['recommend'], $row['istop'], $row['state']);
             
-            app()->getController()->layout = 'phone';
-            $row['content'] = app()->getController()->render('/post/iphoneshow', array(
-                'content'=>$row['content'],
-                'title' => $row['title'],
-            ), true);
+            if ($makeContentPageHtml) {
+                app()->getController()->layout = 'phone';
+                $row['content'] = app()->getController()->render('/post/iphoneshow', array(
+                    'content'=>$row['content'],
+                    'title' => $row['title'],
+                ), true);
+            }
             
             $rows[$index] = $row;
             unset($row);
@@ -274,7 +276,7 @@ class Api_Post extends ApiBase
             ->from('{{post}}')
             ->where($where, $params);
         
-        $rows = $this->fetchPosts($cmd);
+        $rows = $this->fetchPosts($cmd, false);
         
         $data = array(
             'error' => 'OK',
