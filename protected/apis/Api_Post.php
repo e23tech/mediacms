@@ -184,14 +184,24 @@ class Api_Post extends ApiBase
         $this->requirePost();
         $this->requiredParams(array('content', 'user_id'));
 
-        $row['content'] = $this->getPost('content');
-        $row['title'] = mb_substr($row['content'], 0, 15, app()->charset);
-        $row['summary'] = mb_substr($row['content'], 0, 50, app()->charset);
-        $row['contributor_id'] = (int)$this->getPost('user_id');
-        $row['user_name'] = $this->getPost('user_name');
+        $post_id = (int)$this->getPost('post_id');
         
-        $model = new Post();
-        $model->attributes = $row;
+        
+        if ($post_id === 0) {
+            $row['content'] = $this->getPost('content');
+            $row['title'] = mb_substr($row['content'], 0, 15, app()->charset);
+            $row['summary'] = mb_substr($row['content'], 0, 50, app()->charset);
+            $row['contributor_id'] = (int)$this->getPost('user_id');
+            $row['user_name'] = $this->getPost('user_name');
+            
+            $model = new Post();
+            $model->attributes = $row;
+        }
+        else {
+            $model = Post::model()->findByPk($post_id);
+            $model->content = $this->getPost('content');
+        }
+            
         if ($model->save()) {
             $result = $this->afterCreate($model);
             $data = array(
@@ -203,6 +213,7 @@ class Api_Post extends ApiBase
             $errors = $model->getErrors();
             foreach ($errors as $error)
                 $errstr[] = join('|', $error);
+            
             $errstr = join(', ', $errstr);
             $data = array(
                 'error' => $errstr,
