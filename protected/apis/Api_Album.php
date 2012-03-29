@@ -22,13 +22,14 @@ class Api_Album extends ApiBase
         return $data;
     }
     
-    public function pictures(/*$albumid*/)
+    public function pictures(/*$albumid, $count*/)
     {
-        $albumid = $this->getQuery('albumid');
+        $albumid = (int)$this->getQuery('albumid');
+        $count = (int)$this->getQuery('count');
         
         if (empty($albumid)) return array('error'=>'failed');
         
-        $count = 30;
+        $count = ($count > 0) ? $count : 30;
         $cmd = app()->getDb()->createCommand()
             ->from('{{upload}} up')
             ->where('file_type = :type_image and post_id = :albumid', array(':type_image' => Upload::TYPE_PICTURE, ':albumid'=>$albumid))
