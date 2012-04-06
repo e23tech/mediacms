@@ -1,5 +1,5 @@
 <?php
-class ConfigController extends Controller
+class ConfigController extends AdminController
 {
     public function actionView($categoryid)
     {
@@ -10,11 +10,10 @@ class ConfigController extends Controller
             ->where('category_id = :categoryid', array(':categoryid' => $categoryid));
         $rows = $cmd->queryAll();
         
-        $categoryLabels = AdminConfig::categoryLabels();
-        $this->adminTitle = t('view_config_params', 'admin');
+        $labels = AdminConfig::categoryLabels();
+        $this->adminTitle = t('view_config_params', 'admin') . '&nbsp;-&nbsp;' . $labels[$categoryid];
         $this->render('list', array(
             'models'=>$rows,
-            'categoryLabels' => $categoryLabels,
             'categoryid' => $categoryid,
         ));
     }
@@ -40,11 +39,10 @@ class ConfigController extends Controller
             ->where('category_id = :categoryid', array(':categoryid' => $categoryid));
         $rows = $cmd->queryAll();
         
-        $categoryLabels = AdminConfig::categoryLabels();
-        $this->adminTitle = t('edit_config_params', 'admin');
+        $labels = AdminConfig::categoryLabels();
+        $this->adminTitle = t('view_config_params', 'admin') . '&nbsp;-&nbsp;' . $labels[$categoryid];
         $this->render('edit', array(
             'models'=>$rows,
-            'categoryLabels' => $categoryLabels,
             'categoryid' => $categoryid,
             'errorNames' => $errorNames,
         ));
@@ -75,9 +73,9 @@ class ConfigController extends Controller
         
     }
 
-    public function actionTest()
+    public function actionCreate()
     {
-        $data = AdminConfig::flushAllConfig();
+        echo __METHOD__;
     }
 }
 

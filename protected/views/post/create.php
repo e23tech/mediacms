@@ -16,6 +16,7 @@
         </div>
         <div class="clear"></div>
     </div>
+    <?php if (!user()->checkAccess('editor')):?>
     <div class="beta-control-group <?php if ($form->hasErrors('contributor')) echo 'error';?>">
         <label class="beta-control-label"><?php echo t('post_contributor');?></label>
         <div class="beta-controls">
@@ -40,6 +41,7 @@
         </div>
         <div class="clear"></div>
     </div>
+    <?php endif;?>
     <?php if (user()->checkAccess('editor')):?>
     <div class="beta-control-group <?php if ($form->hasErrors('tags')) echo 'error';?>">
         <label class="beta-control-label"><?php echo t('tags');?></label>
@@ -64,6 +66,7 @@
         </div>
         <div class="clear"></div>
     </div>
+    <?php if (!$form->captchaAllowEmpty()):?>
     <div class="beta-control-group captcha-clearfix <?php echo $captchaClass?>">
         <label class="beta-control-label"><?php echo t('captcha');?></label>
         <div class="beta-controls">
@@ -73,9 +76,10 @@
         </div>
         <div class="clear"></div>
     </div>
+    <?php endif;?>
     <div class="beta-form-actions acenter">
-        <?php echo CHtml::submitButton(t('submit'), array('class'=>'beta-btn btn-primary'));?>
-        <?php echo CHtml::resetButton(t('reset'), array('class'=>'beta-btn'));?>
+        <?php echo CHtml::submitButton(t('submit'), array('class'=>'beta-btn small'));?>
+        <?php echo CHtml::resetButton(t('reset'), array('class'=>'beta-btn small'));?>
     </div>
     <?php echo CHtml::endForm();?>
 </div>

@@ -1,12 +1,7 @@
 <?php
 
-class PostController extends Controller
+class PostController extends AdminController
 {
-    public function init()
-    {
-        $this->layout = 'post';
-    }
-    
     public function filters()
     {
         return array(
@@ -40,7 +35,7 @@ class PostController extends Controller
 		$this->render('create', array('model'=>$model));
 	}
 	
-	public function actionToday()
+	public function actionLatest()
 	{
 	    $time = $_SERVER['REQUEST_TIME'] - 24*60*60;
 	    $criteria = new CDbCriteria();
@@ -86,7 +81,14 @@ class PostController extends Controller
 	        throw new CHttpException(500);
 	    
 	    $model->state = abs($model->state - AdminPost::STATE_ENABLED);
-	    $model->save(true, array('state'));
+	    if ($model->state == AdminPost::STATE_ENABLED) {
+	        $model->create_time = $_SERVER['REQUEST_TIME'];
+	        $attributes = array('state', 'create_time');
+	    }
+	    else
+	        $attributes = array('state');
+	    
+        $model->save(true, $attributes);
 	    if ($model->hasErrors())
 	        throw new CHttpException(500);
 	    else {
@@ -134,7 +136,6 @@ class PostController extends Controller
 	     
 	    $this->render('list', $data);
 	}
-
 	
 	public function actionSetHottest($id, $callback)
 	{

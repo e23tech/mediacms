@@ -17,22 +17,8 @@
     <?php $this->renderPartial('/post/_summary_list', array('posts'=>$posts, 'pages'=>$pages));?>
 </div>
 <div class="beta-sidebar">
-    <div class="beta-block">
-        <script type="text/javascript"><!--
-            google_ad_client = "ca-pub-0852804202998726";
-            /* 24beta_336x280 */
-            google_ad_slot = "8426390713";
-            google_ad_width = 336;
-            google_ad_height = 280;
-            //-->
-        </script>
-        <script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
-    </div>
     <?php $this->widget('BetaCommentTopPosts', array('allowEmpty'=>true, 'days'=>30));?>
     <?php $this->widget('BetaVisitTopPosts', array('allowEmpty'=>true, 'days'=>30));?>
-    <div class="beta-block">
-        <script type="text/javascript">/*24beta_336x280，创建于2012-3-8*/ var cpro_id = 'u797747';</script><script src="http://cpro.baidu.com/cpro/ui/c.js" type="text/javascript"></script>
-    </div>
     <!-- editor recommend posts start -->
     <?php if ($recommend):?>
     <div class="beta-block beta-radius3px beta-recommend-posts">
@@ -46,7 +32,6 @@
     </div>
     <?php endif;?>
     <!-- editor recommend posts end -->
-    
     <!-- recommend comments start -->
     <?php if ($comments):?>
     <div class="beta-block beta-radius3px beta-recommend-comments">
@@ -62,3 +47,4 @@
     <!-- recommend comments end -->
 </div>
 <div class="clear"></div>
+

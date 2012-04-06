@@ -53,7 +53,11 @@ class PostForm extends CFormModel
         $post->attributes = $this->attributes;
         $post->post_type = Post::TYPE_POST;
         $post->contributor_id = (int)user()->id;
+        if (empty($post->contributor))
+            $post->contributor = user()->name;
         $post->state = $this->state();
+        $post->user_id = user()->id;
+        $post->user_name = user()->name;
         $post->homeshow = $this->homeshow();
         $post->save();
         $this->afterSave($post);
@@ -62,12 +66,12 @@ class PostForm extends CFormModel
     
     public function state()
     {
-        return user()->checkAccess('enterAdminSystem') ? Post::STATE_ENABLED : Post::STATE_DISABLED;
+        return user()->checkAccess('chief_editor') ? Post::STATE_ENABLED : Post::STATE_DISABLED;
     }
     
     public function homeshow()
     {
-        return user()->checkAccess('enterAdminSystem') ? BETA_YES : param('defaultPostShowHomePage');
+        return user()->checkAccess('chief_editor') ? BETA_YES : param('defaultPostShowHomePage');
     }
         
     public function afterSave(Post $post)
@@ -83,7 +87,8 @@ class PostForm extends CFormModel
     
     public function captchaAllowEmpty()
     {
-        return false;
+        return user()->checkAccess('editor');
     }
-        
+
+    
 }

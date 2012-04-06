@@ -1,18 +1,13 @@
 <?php
 
-class UserController extends Controller
+class UserController extends AdminController
 {
     public function filters()
     {
         return array(
-            'onlyPost + setVerify',
-            'onlyAjax + setVerify',
+            'postOnly + setVerify',
+            'ajaxOnly + setVerify',
         );
-    }
-    
-    public function init()
-    {
-        $this->layout = 'user';
     }
     
 	public function actionIndex()
@@ -148,4 +143,9 @@ class UserController extends Controller
 	    $this->adminTitle = t('reset_user_passwd', 'admin');
 	    $this->render('resetpwd', array('model'=>$user));
 	}
+
+    public function actionStatistics()
+    {
+        echo __METHOD__;
+    }
 }

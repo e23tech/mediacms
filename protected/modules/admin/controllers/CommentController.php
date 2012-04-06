@@ -1,18 +1,16 @@
 <?php
 
-class CommentController extends Controller
+class CommentController extends AdminController
 {
-    public function init()
+    public function filters()
     {
-        $this->layout = 'comment';
+        return array(
+        'ajaxOnly + setVerify, delete, setRecommend, multiDelete',
+        'postOnly + setVerify, delete, setRecommend, multiDelete',
+        );
     }
     
-	public function actionIndex()
-	{
-		$this->render('index');
-	}
-
-	public function actionLatest($hours)
+	public function actionLatest($hours = 48)
 	{
 	    $hours = (int)$hours;
 	    
@@ -22,7 +20,7 @@ class CommentController extends Controller
 	    
 	    $data = AdminComment::fetchList($criteria);
 	    
-	    $this->adminTitle = t('latest_comment_in_hours', 'admin', array('{hours}'=>$hours));
+	    $this->adminTitle = t('latest_comment', 'admin');
 	    
 	    $this->render('list', $data);
 	}
@@ -35,26 +33,35 @@ class CommentController extends Controller
 	    
 	    $data = AdminComment::fetchList($criteria);
 	    
-	    $this->adminTitle = t('recommend_comment', 'admin', array('{count}'=>$count));
+	    $this->adminTitle = t('verify_comment', 'admin');
 	    
 	    $this->render('list', $data);
 	}
-	
+
 	public function actionSearch()
 	{
-	    
+	    $form = new CommentSearchForm();
+	     
+	    if (isset($_GET['CommentSearchForm'])) {
+	        $form->attributes = $_GET['CommentSearchForm'];
+	        if ($form->validate())
+	            $data = $form->search();
+	        user()->setFlash('table_caption', t('comment_search_result', 'admin'));
+	    }
+	     
+	    $this->render('search', array('form'=>$form, 'data'=>$data));
 	}
 	
-	public function actionRecommend($count)
+	public function actionRecommend()
 	{
-	    $count = (int)$count;
+	    $count = (int)param('adminCommentCountOfPage');
 	    $criteria = new CDbCriteria();
 	    $criteria->scopes = 'recommend';
 	    $criteria->limit = $count;
 	     
 	    $data = AdminComment::fetchList($criteria);
 	     
-	    $this->adminTitle = t('recommend_comment', 'admin', array('{count}'=>$count));
+	    $this->adminTitle = t('recommend_comment', 'admin');
 	     
 	    $this->render('list', $data);
 	}
@@ -100,5 +107,49 @@ class CommentController extends Controller
 	        exit(0);
 	    }
 	}
+
+	public function actionDelete($id, $callback)
+	{
+	    $id = (int)$id;
+	    $model = AdminComment::model()->findByPk($id);
+	    if ($model === null)
+	        throw new CHttpException(500);
+	    
+	    $result = $model->delete();
+	    $data = array(
+	        'errno' => $result ? BETA_NO : BETA_YES,
+	    );
+	    echo $callback . '(' . CJSON::encode($data) . ')';
+	    exit(0);
+	}
+	
+	/**
+	 * 批量删除评论
+	 * @param array $ids 评论ID数组
+	 * @param string $callback jsonp回调函数，自动赋值
+	 */
+	public function actionMultiDelete($callback)
+	{
+	    $ids = (array)request()->getPost('ids');
+	    $successIds = $failedIds = array();
+	    foreach ($ids as $id) {
+    	    $model = AdminComment::model()->findByPk($id);
+    	    if ($model === null)
+    	        continue;
+    	    
+    	    $result = $model->delete();
+    	    if ($result)
+        	    $successIds[] = $id;
+    	    else
+    	        $failedIds[] = $id;
+	    }
+	    $data = array(
+	        'success' => $successIds,
+	        'failed' => $failedIds,
+	    );
+	    echo $callback . '(' . CJSON::encode($data) . ')';
+	    exit(0);
+	}
+	
 }
 

@@ -160,6 +160,42 @@ class SiteController extends Controller
         print_r($data);
     }
     
-    
+    public function actionTest()
+    {
+        phpinfo();
+        exit;
+        
+        $auth=Yii::app()->authManager;
+        $auth->createOperation('create_post','create a post');
+        $auth->createOperation('update_post','update a post');
+        $auth->createOperation('delete_post','delete a post');
+        $auth->createOperation('enter_admin_system','login into admin system');
+        $auth->createOperation('upload_file','upload a file');
+
+        $bizRule='return Yii::app()->user->id==$params["post"]->user_id;';
+        $task=$auth->createTask('update_own_post','update a post by author himself',$bizRule);
+        $task->addChild('update_post');
+         
+        $role=$auth->createRole('author');
+        $role->addChild('create_post');
+        $role->addChild('update_own_post');
+        $role->addChild('upload_file');
+         
+        $role=$auth->createRole('editor');
+        $role->addChild('update_post');
+        $role->addChild('enter_admin_system');
+        $role->addChild('author');
+
+        $role=$auth->createRole('chief_editor');
+        $role->addChild('editor');
+        
+        $role=$auth->createRole('admin');
+        $role->addChild('chief_editor');
+        $role->addChild('delete_post');
+         
+        $auth->assign('admin','1');
+        
+
+    }
 }
 

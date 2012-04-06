@@ -7,7 +7,7 @@ return array(
     // 网站名称
     'sitename' => '舜网全媒体',
     // 网站短描述
-    'shortdesc' => '我们不是一个人在战斗',
+    'shortdesc' => '我们更懂济南',
     // 网站语言
     'language' => 'zh_cn',
     // 使用的时区
