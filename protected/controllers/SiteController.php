@@ -163,7 +163,7 @@ class SiteController extends Controller
     public function actionTest()
     {
 //         phpinfo();
-//         exit;
+        exit;
         
         $auth=Yii::app()->authManager;
         $auth->createOperation('create_post','create a post');
