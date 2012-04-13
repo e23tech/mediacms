@@ -36,8 +36,7 @@
 <div class="beta-footer">
     <div class="beta-container">
         <p><?php echo t('site_announce');?></p>
-        <p><?php echo t('site_content_share_announce');?>&nbsp;&copy;2012&nbsp;<?php echo app()->name;?>&nbsp;<?php echo param('beianCode');?></p>
-        <p>Powered by <a href="http://www.24beta.com/" target="_blank">24beta.com</a></p>
+        <p>&copy;2012&nbsp;<?php echo app()->name;?>&nbsp;<?php echo param('beianCode');?></p>
     </div>
 </div>
 <a class="beta-backtop" href="#top"><?php echo t('return_top');?></a>
