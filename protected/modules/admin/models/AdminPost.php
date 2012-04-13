@@ -5,10 +5,10 @@
  * @property string $deleteUrl
  * @property string $verifyUrl
  * @property string $adminTitleLink
- * @property string $verifyUlr
  * @property string $hottestUrl
  * @property string $recommendUrl
  * @property string $homeshowUrl
+ * @property string $commentUrl
  */
 class AdminPost extends Post
 {
@@ -23,17 +23,7 @@ class AdminPost extends Post
     
     public function getInfoUrl()
     {
-        return url('admin/post/info', array('id'=>$this->id));
-    }
-    
-    public function getAdminTitleLink($target = 'main')
-    {
-	    if ($this->istop == BETA_YES)
-	        $title = '<strong>[' . t('istop') . ']' . $this->title . '</strong>';
-	    else
-	        $title = $this->title;
-	    
-	    return l($title, $this->getInfoUrl(), array('class'=>'post-title', 'target'=>$target));
+        return l(t('post_info_view', 'admin'), url('admin/post/info', array('id'=>$this->id)));
     }
     
     public static function fetchList($criteria = null, $sort = true, $pages = true)
@@ -56,7 +46,7 @@ class AdminPost extends Post
         }
 
         $models = self::model()->findAll($criteria);
-         
+
         $data = array(
             'models' => $models,
             'sort' => $sort,
@@ -98,5 +88,10 @@ class AdminPost extends Post
     {
         $text = t(($this->homeshow == BETA_YES) ? 'cannel_homeshow_post' : 'set_homeshow_post', 'admin');
         return l($text, url('admin/post/sethomeshow', array('id'=>$this->id)), array('class'=>'set-recommend'));
+    }
+
+    public function getCommentUrl()
+    {
+        return l(t('comment_list_table', 'admin'), url('admin/comment/list', array('postid'=>$this->id)));
     }
 }

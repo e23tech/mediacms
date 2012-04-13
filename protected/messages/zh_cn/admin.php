@@ -1,6 +1,7 @@
 <?php
 return array(
     'control_center' => '管理中心',
+    'site_home' => '网站首页',
     'action_shortcut' => '快捷操作',
     'post_manage' => '文章管理',
     'action_post' => '发布',
@@ -25,6 +26,7 @@ return array(
     'provision' => '条款',
     'statistics' => '统计',
     'latest' => '最新',
+    'logout_control_center' => '退出登录',
 
     'create' => '新建',
     'edit' => '编辑',
@@ -120,10 +122,12 @@ return array(
     'comment_list_table' => '评论列表',
     'set_recommend_comment' => '推荐评论',
     'cancel_recommend_comment' => '取消推荐',
+    'set_batch_verify' => '通过',
+    'set_batch_reject' => '拒绝',
 
     /* post manage */
     'create_posts' => '发表文章',
-    'latest_posts' => '今日发布',
+    'latest_posts' => '最新发布',
     'verify_posts' => '审核文章',
     'search_posts' => '搜索文章',
     'hottest_posts' => '热门文章',
@@ -144,6 +148,9 @@ return array(
     'pass_review' => '通过',
     'sethottest' => '热门',
     'setrecommend' => '推荐',
+    'post_info_view' => '统计信息',
+    'post_is_not_exist' => '该文章不存在',
+    'post_upload_picutures' => '文章图片',
         
     /* user manager */
     'user_is_not_exist' => '该用户不存在',

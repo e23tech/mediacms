@@ -86,6 +86,17 @@ class Upload extends CActiveRecord
 		);
 	}
 
+	public function getFileUrl()
+	{
+	    $pos = strpos($this->url, 'http://');
+	    if ($pos === 0)
+    	    return $this->url;
+	    elseif ($pos === false)
+	        return fbu($this->url);
+	    else
+	        return '';
+	}
+	
 	protected function beforeSave()
 	{
 	    if ($this->getIsNewRecord()) {
@@ -99,6 +110,7 @@ class Upload extends CActiveRecord
 	protected function afterDelete()
 	{
 	    $filename = fbp($this->url);
-	    unlink($filename);
+	    if (is_file($filename) && file_exists($filename) && is_writable($filename))
+    	    unlink($filename);
 	}
 }
