@@ -17,6 +17,8 @@ return array(
     'password' => '密码',
     'user_state' => '状态',
     'user_token' => '标识',
+    'user_disabled' => '禁用',
+    'user_enabled' => '启用',
         
     /*
      * Model Config attributeLabels
@@ -34,7 +36,7 @@ return array(
     'topic' => '主题',
     'title' => '标题',
     'create_time' => '添加时间',
-    'create_ip' => 'IP',
+    'create_ip' => 'IP地址',
     'score' => '评分',
     'score_nums' => '评分次数',
     'comment_nums' => '评论数',
@@ -195,6 +197,13 @@ return array(
     /* site/login */
     'site_login' => '用户登录',
     'site_signup' => '用户注册',
+    'please_input_your_email' => '请输入您的email',
+    'email_is_exist' => '该email已经被已经',
+    'nickname_is_exist'=> '该名字已被人抢了，请换一个吧',
+    'please_input_your_password' => '请输入您的密码',
+    'please_agree_policy' => '请同意服务条款和协议',
+    'please_input_your_nickname' => '请输入您的大名',
+    'email_or_password_error' => '邮箱或密码错误',
 
     /* topic/list */
     'all_topics_description' => '所有主题列表',
