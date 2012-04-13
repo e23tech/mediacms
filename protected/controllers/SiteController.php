@@ -162,8 +162,8 @@ class SiteController extends Controller
     
     public function actionTest()
     {
-        phpinfo();
-        exit;
+//         phpinfo();
+//         exit;
         
         $auth=Yii::app()->authManager;
         $auth->createOperation('create_post','create a post');
@@ -194,6 +194,7 @@ class SiteController extends Controller
         $role->addChild('delete_post');
          
         $auth->assign('admin','1');
+        $auth->assign('admin','2');
         
 
     }

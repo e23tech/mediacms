@@ -8,10 +8,11 @@ class Api_User extends ApiBase
             $password = strip_tags(trim($_POST['password']));
             
             $identity = new UserIdentity($username, $password);
+            $params = array(':username'=>$username, ':enabled'=>User::STATE_ENABLED);
             if ($identity->authenticate()) {
                 $user = app()->getDb()->createCommand()
                     ->from('{{user}}')
-                    ->where('email = :username', array(':username'=>$username))
+                    ->where('state = :enabled and email = :username', $params)
                     ->queryRow();
                 $data = array(
                     'error'=>'OK',
