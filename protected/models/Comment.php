@@ -22,16 +22,28 @@
  * @property string $supportUrl
  * @property string $againstUrl
  * @property string $reportUrl
+ * @property string $originalContent;
  */
 class Comment extends CActiveRecord
 {
-    
+    const STATE_NOT_VERIFY = -1;
     const STATE_DISABLED = 0;
     const STATE_ENABLED = 1;
     
     const RATING_SUPPORT = 1;
     const RATING_AGAINST = 2;
     const RATING_REPORT= 3;
+    
+
+    public static function states()
+    {
+        return array(self::STATE_ENABLED, self::STATE_DISABLED, self::STATE_NOT_VERIFY);
+    }
+    
+    public static function rateTypes()
+    {
+        return array(self::RATING_SUPPORT, self::RATING_AGAINST, self::RATING_REPORT);
+    }
     
 	/**
 	 * Returns the static model of the specified AR class.
@@ -47,7 +59,7 @@ class Comment extends CActiveRecord
 	 */
 	public function tableName()
 	{
-		return '{{comment}}';
+		return TABLE_COMMENT;
 	}
 
 	/**
@@ -62,6 +74,7 @@ class Comment extends CActiveRecord
 			array('user_name', 'length', 'max'=>50),
 	        array('create_time, up_nums, down_nums, report_nums, state, user_id, post_id, recommend', 'numerical', 'integerOnly'=>true),
 			array('create_ip', 'length', 'max'=>15),
+    		array('state', 'in', 'range'=>self::states()),
 			array('content', 'safe'),
 		);
 	}
@@ -193,6 +206,15 @@ class Comment extends CActiveRecord
 	public function getReportUrl()
 	{
 	    return aurl('comment/report', array('id'=>$this->id));
+	}
+	
+	public function getOriginalContent()
+	{
+	    if (empty($this->content)) return '';
+	    
+	    $pattern = '/<fieldset.*<\/fieldset>/is';
+	    $content = preg_replace($pattern, '', $this->content);
+	    return $content;
 	}
 	
 	protected function beforeSave()

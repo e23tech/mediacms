@@ -55,6 +55,9 @@
  */
 class Post extends CActiveRecord
 {
+    const STATE_TRASH = -99;
+    const STATE_REJECTED = -2;
+    const STATE_NOT_VERIFY = -1;
     const STATE_DISABLED = 0;
     const STATE_ENABLED = 1;
     
@@ -70,6 +73,16 @@ class Post extends CActiveRecord
     const TYPE_ALBUM = 2;
     const TYPE_GOODS = 3;
     
+    public static function states()
+    {
+        return array(self::STATE_ENABLED, self::STATE_DISABLED, self::STATE_REJECTED, self::STATE_NOT_VERIFY);
+    }
+    
+    public static function types()
+    {
+        return array(self::TYPE_POST, self::TYPE_ALBUM, self::TYPE_VOTE, self::TYPE_GOODS);
+    }
+    
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return Post the static model class
@@ -84,7 +97,7 @@ class Post extends CActiveRecord
 	 */
 	public function tableName()
 	{
-		return '{{post}}';
+		return TABLE_POST;
 	}
 
 	/**
@@ -102,6 +115,8 @@ class Post extends CActiveRecord
 			array('user_name, contributor', 'length', 'max'=>50),
 	        array('contributor_site', 'url'),
 	        array('contributor_email', 'email'),
+    		array('state', 'in', 'range'=>self::states()),
+    		array('post_type', 'in', 'range'=>self::types()),
 			array('summary, content', 'safe'),
 		);
 	}
@@ -186,6 +201,9 @@ class Post extends CActiveRecord
             'homeshow' => array(
                 'condition' => 't.homeshow = ' . BETA_YES,
             ),
+            'rejected' => array(
+                'condition' => 't.state = ' . self::STATE_REJECTED,
+            ),
             'published' => array(
                 'condition' => 't.state = ' . self::STATE_ENABLED,
             ),
@@ -259,10 +277,13 @@ class Post extends CActiveRecord
 	    $textLen = 50;
 	    $text = mb_strimwidth($this->source, 0, $textLen, '...', app()->charset);
 	    
-	    if (strpos($this->source, 'http://') === false && strpos($this->source, 'https://') === false)
+	    $pos = strpos($this->source, 'http://');
+	    if ($pos === false)
 	        $source = $text;
-	    else
+	    elseif ($pos === 0)
 	        $source = l($text, $this->source, array('target'=>'_blank', 'class'=>'post-source'));
+	    else
+	        $source = '';
 	    
 	    return $source;
 	}
@@ -348,16 +369,15 @@ class Post extends CActiveRecord
 	        // @todo 此处读取文章中第一个图片作为缩略图。
 	    }
 	    
-	    if ($url) {
-	        $pos = strpos($this->thumbnail, 'http://');
-	        if ($pos === false)
-	            $url = fbu($this->thumbnail);
-	        elseif ($pos === 0)
-	            $url = $this->thumbnail;
-	    }
+	    if (empty($url)) return '';
+
+	    $pos = strpos($this->thumbnail, 'http://');
+        if ($pos === false)
+            $url = fbu($this->thumbnail);
+        elseif ($pos === 0)
+            $url = $this->thumbnail;
 	    else
 	        $url = '';
-	    
 	    
 	    return $url;
 	}

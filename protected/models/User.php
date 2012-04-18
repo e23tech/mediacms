@@ -12,12 +12,19 @@
  * @property string $create_ip
  * @property integer $state
  * @property string $token
- * @property string $createTime
+ * @property string $createTimeText
  */
 class User extends CActiveRecord
 {
     const STATE_DISABLED = 0;
     const STATE_ENABLED = 1;
+    const STATE_FORBIDDEN = -1;
+    
+
+    public static function states()
+    {
+        return array(self::STATE_ENABLED, self::STATE_DISABLED, self::STATE_FORBIDDEN);
+    }
     
 	/**
 	 * Returns the static model of the specified AR class.
@@ -33,7 +40,7 @@ class User extends CActiveRecord
 	 */
 	public function tableName()
 	{
-		return '{{user}}';
+		return TABLE_USER;
 	}
 
 	/**
@@ -53,6 +60,7 @@ class User extends CActiveRecord
 			array('name', 'length', 'max'=>50),
 			array('password', 'length', 'max'=>32, 'min'=>'5'),
 			array('create_ip', 'length', 'max'=>15, 'min'=>7),
+    		array('state', 'in', 'range'=>self::states()),
 		);
 	}
 
@@ -90,14 +98,14 @@ class User extends CActiveRecord
 		);
 	}
 	
-	public function getCreateTime($format = null)
+	public function getCreateTimeText($format = null)
 	{
 	    if  (null === $format)
 	        $format = param('formatShortDateTime');
 	
 	    return date($format, $this->create_time);
 	}
-	
+	    
 	protected function beforeSave()
 	{
 	    if ($this->getIsNewRecord()) {

@@ -71,17 +71,18 @@ class PostForm extends CFormModel
     
     public function homeshow()
     {
-        return user()->checkAccess('chief_editor') ? BETA_YES : param('defaultPostShowHomePage');
+        return user()->checkAccess('create_post_in_home') ? BETA_YES : param('defaultPostShowHomePage');
     }
         
     public function afterSave(Post $post)
     {
         $key = param('sess_post_create_token');
-        if (app()->session->contains($key)) {
-            $token = app()->session[$key];
-            $attributes = array('post_id'=>$post->id, 'token'=>'');
-            Upload::model()->updateAll($attributes, 'token = :token', array(':token'=>$token));
-            app()->session->remove($key);
+        if (app()->session->contains($key) && $token = app()->session[$key]) {
+            if (!$post->hasErrors()) {
+                $attributes = array('post_id'=>$post->id, 'token'=>'');
+                Upload::model()->updateAll($attributes, 'token = :token', array(':token'=>$token));
+                app()->session->remove($key);
+            }
         }
     }
     
