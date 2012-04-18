@@ -63,6 +63,17 @@ class PostController extends AdminController
         }
 	}
 	
+	public function actionInfo($id)
+	{
+	    $id = (int)$id;
+	    if ($id <= 0)
+	        throw new CHttpException(404, 'post is not found');
+	    
+	    $model = AdminPost::model()->findByPk($id);
+	    
+	    $this->render('info', array('model'=>$model));
+	}
+	
 	public function actionLatest($cid = 0, $tid = 0)
 	{
 	    $cid = (int)$cid;
