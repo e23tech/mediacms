@@ -11,13 +11,13 @@
 <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container admin-nav-container">
-            <a class="brand" href="<?php echo url('admin/default/welcome');?>" target="main">舜网全媒体</a>
+            <a class="brand" href="<?php echo url('admin/default/welcome');?>" target="main">24Beta<?php echo t('control_center', 'admin');?></a>
             <ul class="nav">
                 <li class="divider-vertical"></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo t('post_manage', 'admin');?><b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li><?php echo l(t('create_posts', 'admin'), url('admin/post/createpost'), array('target'=>'main'));?></li>
+                        <li><?php echo l(t('create_posts', 'admin'), url('admin/post/create'), array('target'=>'main'));?></li>
                         <li><?php echo l(t('verify_posts', 'admin'), url('admin/post/verify'), array('target'=>'main'));?></li>
                         <li><?php echo l(t('search_posts', 'admin'), url('admin/post/search'), array('target'=>'main'));?></li>
                         <li class="divider"></li>
@@ -25,10 +25,11 @@
                         <li><?php echo l(t('hottest_posts', 'admin'), url('admin/post/hottest'), array('target'=>'main'));?></li>
                         <li><?php echo l(t('editor_recommend_posts', 'admin'), url('admin/post/recommend'), array('target'=>'main'));?></li>
                         <li><?php echo l(t('home_show_posts', 'admin'), url('admin/post/homeshow'), array('target'=>'main'));?></li>
+                        <li><?php echo l(t('istop_posts', 'admin'), url('admin/post/istop'), array('target'=>'main'));?></li>
                         <li class="divider"></li>
                         <li class="nav-header">附件</li>
-                        <li><a href="#">附件查询</a></li>
-                        <li><a href="#">附件列表</a></li>
+                        <li><?php echo l(t('upload_file_search', 'admin'), url('admin/upload/search'), array('target'=>'main'));?></li>
+                        <li><?php echo l(t('upload_file_list', 'admin'), url('admin/upload/list'), array('target'=>'main'));?></li>
                     </ul>
                 </li>
                 <li class="dropdown">
@@ -37,12 +38,12 @@
                         <li class="nav-header"><?php echo t('post_topic', 'admin');?></li>
                         <li><?php echo l(t('create_topic', 'admin'), url('admin/topic/create'), array('target'=>'main'));?></li>
                         <li><?php echo l(t('topic_list_table', 'admin'), url('admin/topic/list'), array('target'=>'main'));?></li>
-                        <li><?php echo l(t('topic_statistics', 'admin'), url('admin/topic/statistics'), array('target'=>'main'));?></li>
+                        <!-- <li><?php echo l(t('topic_statistics', 'admin'), url('admin/topic/statistics'), array('target'=>'main'));?></li> -->
                         <li class="divider"></li>
                         <li class="nav-header"><?php echo t('post_category', 'admin');?></li>
                         <li><?php echo l(t('create_category', 'admin'), url('admin/category/create'), array('target'=>'main'));?></li>
                         <li><?php echo l(t('category_list_table', 'admin'), url('admin/category/list'), array('target'=>'main'));?></li>
-                        <li><?php echo l(t('category_statistics', 'admin'), url('admin/category/statistics'), array('target'=>'main'));?></li>
+                        <!-- <li><?php echo l(t('category_statistics', 'admin'), url('admin/category/statistics'), array('target'=>'main'));?></li> -->
                     </ul>
                 </li>
                 <li class="dropdown">
@@ -68,11 +69,12 @@
                         <li><?php echo l(t('search_user', 'admin'), url('admin/user/search'), array('target'=>'main'));?></li>
                         <li class="divider"></li>
                         <li class="nav-header"><?php echo t('statistics', 'admin');?></li>
-                        <li><?php echo l(t('most_active_users', 'admin'), url('admin/user/mostactive', array('day'=>14)), array('target'=>'main'));?></li>
+                        <!-- <li><?php echo l(t('most_active_users', 'admin'), url('admin/user/mostactive', array('day'=>14)), array('target'=>'main'));?></li> -->
                         <li><?php echo l(t('today_signup', 'admin'), url('admin/user/today'), array('target'=>'main'));?></li>
-                        <li><?php echo l(t('user_statistics', 'admin'), url('admin/user/statistics'), array('target'=>'main'));?></li>
+                        <!-- <li><?php echo l(t('user_statistics', 'admin'), url('admin/user/statistics'), array('target'=>'main'));?></li> -->
                     </ul>
                 </li>
+                <!--
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo t('system_tool', 'admin');?><b class="caret"></b></a>
                     <ul class="dropdown-menu">
@@ -85,6 +87,7 @@
                         <li><a href="#">恢复</a></li>
                     </ul>
                 </li>
+                 -->
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo t('system_setting', 'admin');?><b class="caret"></b></a>
                     <ul class="dropdown-menu">
@@ -129,13 +132,16 @@
 <div class="well admin-sidebar">
     <ul class="nav nav-list">
         <li class="nav-header"><?php echo t('article', 'admin');?></li>
-        <li><?php echo l(t('create_posts', 'admin'), url('admin/post/createpost'), array('target'=>'main'));?></li>
+        <li><?php echo l(t('create_posts', 'admin'), url('admin/post/create'), array('target'=>'main'));?></li>
         <li><?php echo l(t('verify_posts', 'admin'), url('admin/post/verify'), array('target'=>'main'));?></li>
         <li><?php echo l(t('latest_posts', 'admin'), url('admin/post/latest'), array('target'=>'main'));?></li>
         <li><?php echo l(t('search_posts', 'admin'), url('admin/post/search'), array('target'=>'main'));?></li>
         <li class="nav-header"><?php echo t('post_comment', 'admin');?></li>
-        <li><?php echo l(t('action_verify', 'admin'), url('admin/comment/verify'), array('target'=>'main'));?></li>
-        <li><?php echo l(t('latest', 'admin'), url('admin/comment/latest'), array('target'=>'main'));?></li>
+        <li><?php echo l(t('verify_comment', 'admin'), url('admin/comment/verify'), array('target'=>'main'));?></li>
+        <li><?php echo l(t('latest_comment', 'admin'), url('admin/comment/latest'), array('target'=>'main'));?></li>
+        <li class="nav-header"><?php echo t('user_manage', 'admin');?></li>
+        <li><?php echo l(t('verify_user', 'admin'), url('admin/user/verify'), array('target'=>'main'));?></li>
+        <li><?php echo l(t('today_signup', 'admin'), url('admin/user/today'), array('target'=>'main'));?></li>
     </ul>
 </div>
 <div class="admin-container">

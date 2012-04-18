@@ -10,47 +10,94 @@ class PostController extends AdminController
         );
     }
     
-	public function actionCreatePost($id = 0)
+	public function actionCreate($id = 0)
 	{
 	    $id = (int)$id;
 	    if ($id === 0) {
 	        $model = new AdminPost();
+	        $model->homeshow = user()->checkAccess('create_post_in_home') ? BETA_YES : BETA_NO;
+	        $model->state = BETA_YES;
 	        $this->adminTitle = t('create_post');
 	    }
-	    else {
+	    elseif ($id > 0) {
 	        $model = AdminPost::model()->findByPk($id);
 	        $this->adminTitle = t('edit_post');
 	    }
+	    else
+	        throw new CHttpException(500);
 	    
 	    if (request()->getIsPostRequest() && isset($_POST['AdminPost'])) {
 	        $model->attributes = $_POST['AdminPost'];
 	        $model->post_type = AdminPost::TYPE_POST;
 	        if ($model->save()) {
+	            $this->afterPostSave($model);
 	            user()->setFlash('save_post_result', t('save_post_success', 'admin', array('{title}'=>$model->title, '{url}'=>$model->url)));
-	            $this->redirect(request()->getUrl());
+                $this->redirect(request()->getUrl());
 	        }
 	    }
+	    else {
+	        $key = param('sess_post_create_token');
+            if (!app()->session->contains($key) || empty(app()->session[$key]))
+                app()->session->add($key, uniqid('beta', true));
+            else {
+                $token = app()->session[$key];
+                $tempPictures = Upload::model()->findAllByAttributes(array('token'=>$token));
+            }
+	    }
 	    
-	    
-	    $this->layout = 'main';
 		$this->render('create', array(
 		    'model'=>$model,
+	        'tempPictures' => $tempPictures,
 		));
 	}
 	
-	public function actionLatest()
+	private function afterPostSave(AdminPost $post)
 	{
-	    $count = (int)$count;
+	    $key = param('sess_post_create_token');
+        if (app()->session->contains($key) && $token = app()->session[$key]) {
+            if (!$post->hasErrors()) {
+                $attributes = array('post_id'=>$post->id, 'token'=>'');
+                AdminUpload::model()->updateAll($attributes, 'token = :token', array(':token'=>$token));
+                app()->session->remove($key);
+            }
+        }
+	}
+	
+	public function actionLatest($cid = 0, $tid = 0)
+	{
+	    $cid = (int)$cid;
+	    $tid = (int)$tid;
 	    $criteria = new CDbCriteria();
+	    
+	    $title = t('post_list_table', 'admin');
+	    if ($cid > 0) {
+	        $category = AdminCategory::model()->findByPk($cid);
+	        if ($category === null)
+	            throw new CException(t('category_is_not_exist', 'admin'));
+	        
+	        $title = $title . ' - ' . $category->postsLink;
+	        $criteria->addColumnCondition(array('category_id'=>$cid));
+	    }
+	    
+	    if ($tid > 0) {
+	        $topic = AdminTopic::model()->findByPk($tid);
+	        if ($topic === null)
+	            throw new CException(t('topic_is_not_exist', 'admin'));
+	         
+	        $title = $title . ' - ' . $topic->postsLink;
+	        $criteria->addColumnCondition(array('topic_id'=>$tid));
+	    }
+	    
 	    $data = AdminPost::fetchList($criteria);
 	    
+	    $this->adminTitle = $title;
 	    $this->render('list', $data);
 	}
 	
 	public function actionVerify()
 	{
 	    $criteria = new CDbCriteria();
-	    $criteria->addColumnCondition(array('state'=>AdminPost::STATE_DISABLED));
+	    $criteria->addColumnCondition(array('t.state'=>AdminPost::STATE_DISABLED));
 	    $data = AdminPost::fetchList($criteria);
 	    
 	    $this->render('list_noverify', $data);
@@ -70,34 +117,6 @@ class PostController extends AdminController
         $this->render('search', array('form'=>$form, 'data'=>$data));
 	}
 	
-	public function actionSetVerify($id, $callback)
-	{
-	    $id = (int)$id;
-	    $model = AdminPost::model()->findByPk($id);
-	    if ($model === null)
-	        throw new CHttpException(500);
-	    
-	    $model->state = abs($model->state - AdminPost::STATE_ENABLED);
-	    if ($model->state == AdminPost::STATE_ENABLED) {
-	        $model->create_time = $_SERVER['REQUEST_TIME'];
-	        $attributes = array('state', 'create_time');
-	    }
-	    else
-	        $attributes = array('state');
-	    
-        $model->save(true, $attributes);
-	    if ($model->hasErrors())
-	        throw new CHttpException(500);
-	    else {
-	        $data = array(
-	            'errno' => BETA_NO,
-	            'label' => t($model->state == AdminPost::STATE_ENABLED ? 'sethide' : 'setshow', 'admin')
-	        );
-	        echo $callback . '(' . CJSON::encode($data) . ')';
-	        exit(0);
-	    }
-	}
-
 	public function actionHottest()
 	{
 	    $criteria = new CDbCriteria();
@@ -125,72 +144,46 @@ class PostController extends AdminController
 	    $this->render('list', $data);
 	}
 	
-	public function actionDeleted()
+	public function actionIstop()
 	{
 	    $criteria = new CDbCriteria();
-	    $criteria->addColumnCondition(array('state'=>AdminPost::STATE_DELETED));
+	    $criteria->addColumnCondition(array('istop'=>BETA_YES));
 	    $data = AdminPost::fetchList($criteria);
 	     
 	    $this->render('list', $data);
 	}
 	
-	public function actionSetHottest($id, $callback)
+	public function actionTrash()
 	{
-	    $id = (int)$id;
-	    $model = AdminPost::model()->findByPk($id);
-	    if ($model === null)
-	        throw new CHttpException(500);
+	    $criteria = new CDbCriteria();
+	    $criteria->addColumnCondition(array('state'=>AdminPost::STATE_TRASH));
+	    $data = AdminPost::fetchList($criteria);
 	     
-	    $model->hottest = abs($model->hottest - BETA_YES);
-	    $model->save(true, array('hottest'));
-	    if ($model->hasErrors())
-	        throw new CHttpException(500);
-	    else {
-	        $data = array(
-	            'errno' => BETA_NO,
-	            'label' => t($model->hottest == BETA_YES ? 'cancel_hottest_post' : 'set_hottest_post', 'admin')
-	        );
-	        echo $callback . '(' . CJSON::encode($data) . ')';
-	        exit(0);
-	    }
+	    $this->render('list', $data);
 	}
 
-	public function actionSetRecommend($id, $callback)
+    public function actionSetVerify($id, $callback)
 	{
 	    $id = (int)$id;
 	    $model = AdminPost::model()->findByPk($id);
 	    if ($model === null)
 	        throw new CHttpException(500);
-	     
-	    $model->recommend = abs($model->recommend - BETA_YES);
-	    $model->save(true, array('recommend'));
-	    if ($model->hasErrors())
-	        throw new CHttpException(500);
-	    else {
-	        $data = array(
-	            'errno' => BETA_NO,
-	            'label' => t($model->recommend == BETA_YES ? 'cancel_recommend_post' : 'set_recommend_post', 'admin')
-	        );
-	        echo $callback . '(' . CJSON::encode($data) . ')';
-	        exit(0);
+	    
+	    $model->state = abs($model->state - AdminPost::STATE_ENABLED);
+	    if ($model->state == AdminPost::STATE_ENABLED) {
+	        $model->create_time = $_SERVER['REQUEST_TIME'];
+	        $attributes = array('state', 'create_time');
 	    }
-	}
-
-	public function actionSetHomeshow($id, $callback)
-	{
-	    $id = (int)$id;
-	    $model = AdminPost::model()->findByPk($id);
-	    if ($model === null)
-	        throw new CHttpException(500);
-	     
-	    $model->homeshow = abs($model->homeshow - BETA_YES);
-	    $model->save(true, array('homeshow'));
+	    else
+	        $attributes = array('state');
+	    
+        $model->save(true, $attributes);
 	    if ($model->hasErrors())
 	        throw new CHttpException(500);
 	    else {
 	        $data = array(
 	            'errno' => BETA_NO,
-	            'label' => t($model->homeshow == BETA_YES ? 'cannel_homeshow_post' : 'set_homeshow_post', 'admin')
+	            'label' => t($model->state == AdminPost::STATE_ENABLED ? 'sethide' : 'setshow', 'admin')
 	        );
 	        echo $callback . '(' . CJSON::encode($data) . ')';
 	        exit(0);

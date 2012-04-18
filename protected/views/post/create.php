@@ -90,11 +90,21 @@
         <ul class="beta-block-content">
             <li>欢迎原创及翻译文章，您的独家报料与独特视角是CB的宝贵财富</li>
             <li>非原创文章必须填写来源</li>
-            <li>别忘了署名! 写上您的blog地址,带来意想不到的人气,也可能发现志同道合的访客</li>
+            <li>别忘了署名! 写上您的blog地址,带来意想不到的人气,也可能发现志同道合的网友</li>
             <li>编辑也许会对投递进行适当修改, 以适合在本站发表</li>
             <li>请仔细查看：<a class="cred" href="#">新闻投递规范</a></li>
         </ul>
     </div>
+    <?php if (count($tempPictures) > 0):?>
+    <div class="beta-block beta-small beta-radius3px">
+        <h2><?php echo t('post_upload_temp_pictures');?></h2>
+        <ul class="beta-block-content unstyled temp-pictures">
+            <?php foreach ((array)$tempPictures as $picture):?>
+            <li><img src="<?php echo $picture->fileUrl;?>" /></li>
+            <?php endforeach;?>
+        </ul>
+    </div>
+    <?php endif;?>
 </div>
 <div class="clear"></div>
 
@@ -114,6 +124,11 @@ $(function(){
     	var betaSummary = K.create('#beta-summary', KEConfig.mini);
     	var betaContent = K.create('#beta-content', KEConfig.common);
     	$('#post-form').on('submit', {content:betaContent}, BetaPost.create);
+
+    	$(document).on('click', '.temp-pictures li', function(event){
+            var html = $(this).html();
+            betaContent.insertHtml(html);
+        });
     });
 });
 </script>

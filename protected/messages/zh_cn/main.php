@@ -24,9 +24,11 @@ return array(
      * Model Config attributeLabels
      */
     'config_category' => '参数分类',
-    'config_name' => '参数名称',
+    'config_nickname' => '参数名称',
+    'config_var_name' => '参数变量名',
     'config_value' => '参数值',
     'config_description' => '参数说明',
+    'config_name_pattern' => '变量名只能使用字母数字下划线组成，且只能用字母开头，不区分大小写，长度5-100字符',
         
     /*
      * model Post attributeLabels
@@ -52,7 +54,7 @@ return array(
     'hottest' => '热门',
     'homeshow' => '首页',
     'thumbnail' => '缩略图',
-    'summary' => '简述',
+    'summary' => '摘要',
     'content' => '内容',
     'contributor_id' => '投稿者ID',
     'contributor' => '投稿者',
@@ -60,18 +62,23 @@ return array(
     'contributor_email' => '投稿者邮箱',
 
     /* Upload model */
-    'file_type' => '文件类型',
+    'file_type' => '类型',
     'file_description' => '文件描述',
 
     /* Topic model */
-    'parent_topic' => '父主题',
     'topic_name' => '主题名',
     'post_nums' => '文章数',
     'icon' => '图标',
     'orderid' => '排序ID',
+        
+    /* Upload model */
+    'file_type_picture' => '图片',
+    'file_type_file' => '文件',
+    'file_type_audio' => '音频',
+    'file_type_video' => '视频',
+    'file_type_unknown' => '未知',
 
     /* Category model */
-    'parent_category' => '父分类',
     'category_name' => '分类名',
 
     /* form model LoginForm */
@@ -183,6 +190,7 @@ return array(
     'post_contributor_site' => '您的网站',
     'post_contributor_email' => '您的邮箱',
     'you_do_not_have_enough_permissions' => '您没有上传文件的权限',
+    'post_upload_temp_pictures' => '刚刚上传的图片',
 
     /* topic */
     'all_topic_list' => '所有主题列表',

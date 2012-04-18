@@ -2,14 +2,12 @@ var summaryHtmlTags = {
     a: ['href', 'target', 'name'],
     embed: ['src', 'width', 'height', 'type', 'loop', 'autostart', 'quality', '.width', '.height', 'align', 'allowscriptaccess'],
     img: ['src', 'width', 'height', 'border', 'alt', 'title', '.width', '.height'],
-    'div,p,strong,b,sub,sup,em,i,u,strike': []
+    p: ['.text-align'],
+    'div,strong,b,sub,sup,em,i,u,strike': []
 };
 
 var contentHtmlTags = {
-    span: [
-            '.color', '.background-color', '.font-size', '.font-family', '.background',
-            '.font-weight', '.font-style', '.text-decoration', '.vertical-align', '.line-height'
-    ],
+    span: ['.color', '.text-decoration'],
     div: [
             'align', '.border', '.margin', '.padding', '.text-align', '.color',
             '.background-color', '.font-size', '.font-family', '.font-weight', '.background',
@@ -88,7 +86,7 @@ var KEConfig = {
 	adminfull: {
 		height:450,
         resizeType: 1,
-		allowFileManager: false,
+		allowFileManager: true,
 		allowUpload: true,
 		filterMode: true,
 		allowImageUpload: true,

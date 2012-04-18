@@ -1,5 +1,7 @@
 <?php
 return array(
+    'invalid_request' => '非法请求',
+        
     'control_center' => '管理中心',
     'site_home' => '网站首页',
     'action_shortcut' => '快捷操作',
@@ -20,7 +22,7 @@ return array(
     'user_manage' => '用户',
     'system_tool' => '工具',
     'system_setting' => '设置',
-    'system_about' => '关于我们',
+    'system_about' => '关于24BETA',
     'about_us' => '关于',
     'our_team' => '团队',
     'provision' => '条款',
@@ -28,15 +30,19 @@ return array(
     'latest' => '最新',
     'logout_control_center' => '退出登录',
 
+    'update' => '更新',
+    'updating' => '更新中...',
+    'update_complete' => '更新完成',
     'create' => '新建',
     'edit' => '编辑',
     'delete' => '删除',
     'settop' => '置顶',
+    'cancel_top' => '取消置顶',
     'setshow' => '显示',
     'sethide' => '隐藏',
     'cancel_delete' => '取消删除',
     'submit' => '提交',
-    'reset' => '重写',
+    'submit_post' => '发表文章',
 
     /* PostSearchForm */
     'postid' => '文章ID',
@@ -72,12 +78,14 @@ return array(
     'hottest_show' => '热门',
     'recommend_show' => '推荐',
     'save_post_success' => '{title}&nbsp;发表成功，<a href="{url}" target="_blank">点击查看</a>',
+    'please_select_category' => '请选择分类',
+    'please_select_topic' => '请选择主题',
+    'set_hot_post_tip' => '请设置文章的缩略图',
+    'open_summary' => '添加摘要',
 
     /* create topic */
     'create_topic' => '新建主题',
     'edit_topic' => '编辑主题',
-    'please_select_topic' => '请选择上级主题',
-    'create_root_topic' => '不选择表示创建新的一级主题',
     'save_topic_success' => '{name}&nbsp;保存成功。',
     'topic_list_table' => '主题列表',
     'topic_statistics' => '主题统计',
@@ -85,9 +93,10 @@ return array(
     /* create category */
     'create_category' => '新建分类',
     'edit_category' => '编辑分类',
-    'please_select_category' => '请选择上级分类',
-    'create_root_category' => '不选择表示创建新的一级分类',
     'save_category_success' => '{name}&nbsp;创建成功。',
+
+    'order_id_save_success' => '排序ID更新成功',
+    'order_id_save_error' => '排序ID更新出错：{error}',
         
     'verify_user' => '审核用户',
     'create_user' => '添加用户',
@@ -120,10 +129,14 @@ return array(
     'verify_comment' => '审核评论',
     'search_comment' => '搜索评论',
     'comment_list_table' => '评论列表',
-    'set_recommend_comment' => '推荐评论',
-    'cancel_recommend_comment' => '取消推荐',
+    'set_recommend_comment' => '推荐',
+    'cancel_recommend_comment' => '普通',
     'set_batch_verify' => '通过',
     'set_batch_reject' => '拒绝',
+    'show_comment' => '显示',
+    'hide_comment' => '隐藏',
+    'delete_comment' => '删除',
+    'reload_data' => '重新载入',
 
     /* post manage */
     'create_posts' => '发表文章',
@@ -133,6 +146,7 @@ return array(
     'hottest_posts' => '热门文章',
     'editor_recommend_posts' => '编辑推荐',
     'home_show_posts' => '首页推荐',
+    'istop_posts' => '置顶文章',
     'set_recommend_post' => '推荐文章',
     'cancel_recommend_post' => '取消推荐',
     'set_hottest_post' => '热门',
@@ -143,14 +157,17 @@ return array(
     'cannel_homeshow_post' => '取消首页显示',
     'attachment' => '附件',
 
+    'category_is_not_exist' => '该分类不存在',
+    'topic_is_not_exist' => '该主题不存在',
     'select_all' => '全选',
     'reverse_select' => '反选',
     'pass_review' => '通过',
     'sethottest' => '热门',
     'setrecommend' => '推荐',
-    'post_info_view' => '统计信息',
+    'post_info_view' => '查看',
     'post_is_not_exist' => '该文章不存在',
-    'post_upload_picutures' => '文章图片',
+    'post_upload_pictures' => '文章图片',
+    'post_upload_temp_pictures' => '临时图片',
         
     /* user manager */
     'user_is_not_exist' => '该用户不存在',
@@ -180,7 +197,10 @@ return array(
     'cofig_save_success' => '配置参数保存成功',
     'system_config_is_not_allowed_deleted' => '系统配置参数不能删除',
     'custom_config_params' => '自定义参数',
-    'create_custom_param' => '添加参数',
+    'create_custom_param' => '添加自定义参数',
+    'param_is_not_exist' => '此参数不存在',
+    'create_custom_param_name_tip' => '变量名只能使用字母数字下划线组成，且只能用字母开头，不区分大小写，长度5-100字符',
+    'create_custom_param_value_tip' => '布尔值使用1和0代表',
 
     /* comment search form */
     'post_id' => '文章ID',
@@ -192,7 +212,18 @@ return array(
     'comment_search' => '评论搜索',
     'comment_search_result' => '评论查询结果',
     'comment_create_time' => '评论时间',
-    'comment_delete_confirm' => '确定要删除评论吗？'
+    'comment_delete_confirm' => '确定要删除评论吗？',
+        
+    /* upload file search form */
+    'file_url' => '文件URL',
+        
+    /* upload file manage */
+    'search_upload_file' => '搜索附件',
+    'upload_file_search' => '附件查询',
+    'upload_file_list' => '附件列表',
+    'please_select_file_type' => '请选择文件类型',
+    'view_picture' => '查看图片',
+    'search_result' => '搜索结果',
 );
 
 
