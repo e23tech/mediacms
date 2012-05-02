@@ -3,6 +3,7 @@
  * @property string $infoLink
  * @property string $editUrl
  * @property string $editLink
+ * @property string $trashLink
  * @property string $deleteLink
  * @property string $verifyLink
  * @property string $adminTitleLink
@@ -12,6 +13,7 @@
  * @property string $commentUrl
  * @property string $topLink
  * @property string $commentNumsBadgeHtml
+ * @property string $previewLink
  */
 class AdminPost extends Post
 {
@@ -22,6 +24,17 @@ class AdminPost extends Post
     public static function model($className=__CLASS__)
     {
         return parent::model($className);
+    }
+    
+    public static function stateLabels()
+    {
+        return array(
+            self::STATE_ENABLED => t('post_state_enabled', 'admin'),
+            self::STATE_DISABLED => t('post_state_disabled', 'admin'),
+            self::STATE_REJECTED => t('post_state_rejected', 'admin'),
+            self::STATE_NOT_VERIFY => t('post_state_not_verify', 'admin'),
+            self::STATE_TRASH => t('post_state_trash', 'admin'),
+        );
     }
     
     public function relations()
@@ -56,7 +69,7 @@ class AdminPost extends Post
             $pages->applyLimit($criteria);
         }
 
-        $models = self::model()->with('category', 'topic')->findAll($criteria);
+        $models = self::model()->with('adminCategory', 'adminTopic')->findAll($criteria);
 
         $data = array(
             'models' => $models,
@@ -75,6 +88,11 @@ class AdminPost extends Post
     public function getEditLink()
     {
         return l($this->title, $this->getEditUrl(), array('target'=>'_blank'));
+    }
+
+    public function getTrashLink()
+    {
+        return l(t('delete', 'admin'), url('admin/post/settrash', array('id'=>$this->id)), array('class'=>'set-trash'));
     }
 
     public function getDeleteLink()
@@ -132,5 +150,46 @@ class AdminPost extends Post
         return $html;
     }
 
+    public function getPreviewLink()
+    {
+        return l(t('post_preivew', 'admin'), $this->getUrl(), array('target'=>'_blank'));
+    }
+
+    public function getStateLabel()
+    {
+        $classes = array(
+            self::STATE_DISABLED => 'label-inverse',
+            self::STATE_REJECTED => 'label-important',
+        );
+        
+        $labels = array(
+            self::STATE_DISABLED => t('post_state_marker_disabled', 'admin'),
+            self::STATE_REJECTED => t('post_state_marker_rejected', 'admin'),
+        );
+        
+        $html = '';
+        if (array_key_exists($this->state, $classes))
+            $html = '<span class="label label-small ' . $classes[$this->state] . '">' . $labels[$this->state] . '</span>';
+        
+        return $html;
+    }
+    
+    public function getExtraStateLabels()
+    {
+        $html = '';
+        if ($this->recommend == BETA_YES)
+            $html .= '<span class="label label-small label-success">' . t('post_marker_recommend', 'admin') . '</span>';
+        
+        if ($this->hottest)
+            $html .= '<span class="label label-small label-important">' . t('post_marker_hottest', 'admin') . '</span>';
+        
+        if ($this->homeshow)
+            $html .= '<span class="label label-small label-info">' . t('post_marker_homeshow', 'admin') . '</span>';
+        
+        if ($this->istop)
+            $html .= '<span class="label label-small label-info">' . t('post_marker_top', 'admin') . '</span>';
+        
+        return $html;
+    }
 }
 

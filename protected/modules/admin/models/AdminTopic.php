@@ -24,21 +24,13 @@ class AdminTopic extends Topic
     {
         if ($this->icon && $this->icon instanceof CUploadedFile) {
             $topicThumbnailDir = 'topic';
-            $file = BetaBase::makeUploadFilePath($this->icon->extensionName, $topicThumbnailDir);
-            
-            try {
-                $im = new CdImage();
-                $im->load($this->icon->tempName);
-                $im->saveAsJpeg($file['path']);
-                $this->icon = $file['url'];
-                if ($this->update(array('icon')))
-                    return $file;
-                else
-                    return false;
-            }
-            catch (Exception $e) {
-                echo $e->getMessage();
+            $filename = BetaBase::uploadImage($this->icon, 'topic');
+            if ($filename === false)
                 return false;
+            else {
+                $this->icon = $filename['url'];
+                $this->update(array('icon'));
+                return $filename;
             }
         }
         else

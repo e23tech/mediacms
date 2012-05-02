@@ -1,5 +1,14 @@
 @CHARSET "UTF-8";
 
+/* pages */
+.pagination .selected a{background-color:#f5f5f5;}
+.pagination .selected a{color:#999999;cursor:default;}
+.pagination .hidden span,.pagination .hidden a,.pagination .hidden a:hover{color:#999999;background-color:transparent;cursor:default;visibility:visible;}
+
+/* label */
+.label.label-small {padding:0 1px; margin:0 1px 1px;}
+
+select.select-mini {width:auto;height:auto;line-height:auto;}
 
 /* custom */
 .align-right {text-align:right;}
@@ -24,9 +33,10 @@
 
 .control-group.bottom10px {margin-bottom:10px;}
 
-#summary, #content {width:610px;}
+#summary, #content, #special-desc {width:610px;}
 #summary {height:180px;}
 #content {height:450px;}
+#special-desc {height:200px;}
 
 .topic-icon {max-width:100px; max-height:100px;}
 
@@ -73,4 +83,10 @@ td.column-label {width:150px; text-align:right;}
 .beta-list-table form {margin:0; margin-top:3px;}
 .beta-list-table form .checkbox {font-size:12px; margin-left:1px;}
 .table-post-list td {height:42px;}
+.beta-list-table .quick-links {margin-top:5px;}
+.post-info tr td {padding-right:15px; padding-left:15px;}
+.post-info tr td:first-child {width:150px; text-align:right; color:gray;}
+.post-info tr td:first-child label {color:gray;}
 
+/* filter keyword */
+#kwcontent {width:500px; height:200px;}

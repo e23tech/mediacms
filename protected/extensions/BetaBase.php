@@ -28,22 +28,20 @@ class BetaBase
      * -1 目录不存在并且无法创建
      * -2 目录不可写
      */
-    public static function makeUploadPath($additional = null)
+    public static function makeUploadPath($basePath, $additional = null)
     {
         $relativeUrl = (($additional === null) ? '' : $additional . '/') . date('Y/m/d/', $_SERVER['REQUEST_TIME']);
         $relativePath = (($additional === null) ? '' : $additional . DS) . date(addslashes(sprintf('Y%sm%sd%s', DS, DS, DS)), $_SERVER['REQUEST_TIME']);
 
-        $path = param('uploadBasePath') . $relativePath;
+        $path = $basePath . $relativePath;
 
-        if (!file_exists($path) && !mkdir($path, 0755, true)) {
-            return self::FILE_NO_EXIST;
-        } else if (!is_writable($path)) {
-            return self::FILE_NO_WRITABLE;
-        } else
+        if ((file_exists($path) || mkdir($path, 0755, true)) && is_writable($path))
             return array(
             	'path' => realpath($path) . DS,
                 'url' => $relativeUrl,
             );
+        else
+            throw new Exception('path not exist or not writable', 0);
     }
 
     /**
@@ -61,9 +59,9 @@ class BetaBase
         return $file;
     }
     
-    public static function makeUploadFilePath($extension, $additional = null)
+    public static function makeUploadFilePath($basePath, $extension, $additional = null)
     {
-        $path = self::makeUploadPath($additional);
+        $path = self::makeUploadPath($basePath, $additional);
         $file = self::makeUploadFileName($extension);
         
         $data = array(
@@ -80,5 +78,84 @@ class BetaBase
             return '';
         else
             return md5($password);
+    }
+
+    public static function jsonp($callback, $data, $exit = true)
+    {
+        if (empty($callback))
+            throw new CException('callback is not allowed empty');
+        
+        echo $callback . '(' . CJSON::encode($data) . ')';
+        if ($exit) exit(0);
+    }
+
+    public static function uploadImage(CUploadedFile $upload, $additional = null, $compress = true, $deleteTempFile = true)
+    {
+        if (!$compress) {
+            $result = self::uploadFile($upload, $additional, $deleteTempFile);
+            return $result;
+        }
+        
+        $path = self::makeUploadPath(param('uploadBasePath'), $additional);
+        $file = self::makeUploadFileName(null);
+        $filename = $path['path'] . $file;
+        $im = new CdImage();
+        $im->load($upload->tempName);
+        $result = $im->save($filename);
+        $newFilename = $im->filename();
+        unset($im);
+        if ($result === false)
+            return false;
+        else {
+            $filename = array(
+                'path' => $path['path'] . $newFilename,
+                'url' => $path['url'] . $newFilename
+            );
+            return $filename;
+        }
+    }
+    
+    public static function uploadFile(CUploadedFile $upload, $additional = null, $deleteTempFile = true)
+    {
+        $filename = self::makeUploadFilePath(param('uploadBasePath'), $upload->extensionName);
+        $result = $upload->saveAs($filename['path'], $deleteTempFile);
+        if ($result)
+            return $filename;
+        else
+            return false;
+    }
+
+    public static function filterText($text)
+    {
+        static $keywords = null;
+        if ($keywords === null) {
+            $filename = dp('filter_keywords.php');
+            if (file_exists($filename) && is_readable($filename)) {
+                $keywords = require($filename);
+            }
+            else
+                return $text;
+        }
+//         var_dump($keywords);exit;
+        if (empty($keywords)) return $text;
+
+        try {
+            $patterns = array_keys($keywords);
+            foreach ($patterns as $index => $pattern) {
+                $patterns[$index] = '/' . $pattern . '/is';
+            }
+            
+            $replacement = array_values($keywords);
+            foreach ($replacement as $index => $word)
+                $replacement[$index] = empty($word) ? param('filterKeywordReplacement') : $word;
+            
+            $result = preg_replace($patterns, $replacement, $text);
+            $newText = ($result === null) ? $text : $result;
+        }
+        catch (Exception $e) {
+            $newText = $text;
+        }
+        
+        return $newText;
     }
 }

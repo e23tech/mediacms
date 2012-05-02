@@ -18,16 +18,9 @@ class UserController extends AdminController
 	public function actionVerify()
 	{
 	    $criteria = new CDbCriteria();
-	    $criteria->addColumnCondition(array('state'=>AdminUser::STATE_DISABLED));
+	    $criteria->addColumnCondition(array('state'=>AdminUser::STATE_UNVERIFY));
 	    $data = AdminUser::fetchList($criteria);
 	     
-	    $this->adminTitle = t('verify_user', 'admin');
-	    $this->render('list_no_verify', $data);
-	}
-	
-	public function actionMostActive()
-	{
-	    // @todo adminTitle
 	    $this->adminTitle = t('verify_user', 'admin');
 	    $this->render('list', $data);
 	}
@@ -39,7 +32,18 @@ class UserController extends AdminController
 	    $criteria->addCondition('create_time > ' . $time);
 	    $data = AdminUser::fetchList($criteria);
 	    
-	    $this->adminTitle = t('today_signup', 'admin');
+	    $this->adminTitle = t('today_signup_user', 'admin');
+	    
+	    $this->render('list', $data);
+	}
+	
+	
+	public function actionList()
+	{
+	    $criteria = new CDbCriteria();
+	    $data = AdminUser::fetchList($criteria);
+	    
+	    $this->adminTitle = t('user_account_list', 'admin');
 	    
 	    $this->render('list', $data);
 	}
@@ -53,7 +57,7 @@ class UserController extends AdminController
 	    }
 	    else {
 	        $model = AdminUser::model()->findByPk($id);
-	        $this->adminTitle = t('edit_user', 'admin');
+	        $this->adminTitle = t('edit_user', 'admin') . ' - ' . $model->name;
 	    }
 	    
 	    if (request()->getIsPostRequest() && isset($_POST['AdminUser'])) {
@@ -78,11 +82,6 @@ class UserController extends AdminController
 	    ));
 	}
 	
-	public function actionEdit($id)
-	{
-	    $this->render('edit', array('model'=>$model));
-	}
-	
 	public function actionSearch()
 	{
 	    $form = new UserSearchForm();
@@ -104,14 +103,19 @@ class UserController extends AdminController
 	    if ($model === null)
 	        throw new CHttpException(500);
 	     
-	    $model->state = abs($model->state - AdminUser::STATE_ENABLED);
+	    $model->state = ($model->state == AdminUser::STATE_ENABLED) ? AdminUser::STATE_FORBIDDEN : AdminUser::STATE_ENABLED;
 	    $model->save(true, array('state'));
 	    if ($model->hasErrors())
 	        throw new CHttpException(500);
 	    else {
+	        if ($model->state == AdminUser::STATE_ENABLED)
+	            $text = 'user_enabled';
+	        elseif ($model->state == AdminUser::STATE_FORBIDDEN)
+    	        $text = 'user_forbidden';
+
 	        $data = array(
 	            'errno' => BETA_NO,
-	            'label' => t($model->state == AdminUser::STATE_DISABLED ? 'setshow' : 'sethide', 'admin')
+	            'label' => t($text, 'admin')
 	        );
 	        echo $callback . '(' . CJSON::encode($data) . ')';
 	        exit(0);
@@ -140,22 +144,81 @@ class UserController extends AdminController
 	    }
 	    
 	    $user->password = '';
-	    $this->adminTitle = t('reset_user_passwd', 'admin');
+	    $this->adminTitle = t('reset_user_passwd', 'admin') . ' - ' . $user->name;
 	    $this->render('resetpwd', array('model'=>$user));
 	}
 
-    public function actionStatistics()
-    {
-        echo __METHOD__;
-    }
-
     public function actionCurrent()
     {
-        $userID = (int)user()->id;
+        $this->forward('info');
+    }
+    
+    public function actionInfo($id = 0)
+    {
+        $id = (int)$id;
+        $userID = ($id > 0) ? $id : (int)user()->id;
         $model = AdminUser::model()->findByPk($userID);
         if ($model === null)
             throw new CHttpException(500, t('user_is_not_exist', 'admin'));
         
-        $this->render('current', array('model' => $model));
+        $this->adminTitle = $model->name;
+        $this->render('info', array('model' => $model));
+    }
+
+
+    /**
+     * 批量审核用户
+     * @param array $ids 用户ID数组
+     * @param string $callback jsonp回调函数，自动赋值
+     */
+    public function actionMultiVerify($callback)
+    {
+        $ids = (array)request()->getPost('ids');
+    
+        $successIds = $failedIds = array();
+        $attributes = array(
+            'state' => AdminUser::STATE_ENABLED,
+        );
+        foreach ($ids as $id) {
+            $result = AdminUser::model()->updateByPk($id, $attributes);
+            if ($result)
+                $successIds[] = $id;
+            else
+                $failedIds[] = $id;
+        }
+        $data = array(
+            'success' => $successIds,
+            'failed' => $failedIds,
+            'label' => t('user_enabled', 'admin'),
+        );
+        BetaBase::jsonp($callback, $data);
+    }
+    
+    /**
+     * 批量禁用用户
+     * @param array $ids 用户ID数组
+     * @param string $callback jsonp回调函数，自动赋值
+     */
+    public function actionMultiForbidden($callback)
+    {
+        $ids = (array)request()->getPost('ids');
+    
+        $successIds = $failedIds = array();
+        $attributes = array(
+            'state' => AdminUser::STATE_FORBIDDEN,
+        );
+        foreach ($ids as $id) {
+            $result = AdminUser::model()->updateByPk($id, $attributes);
+            if ($result)
+                $successIds[] = $id;
+            else
+                $failedIds[] = $id;
+        }
+        $data = array(
+            'success' => $successIds,
+            'failed' => $failedIds,
+            'label' => t('user_forbidden', 'admin'),
+        );
+        BetaBase::jsonp($callback, $data);
     }
 }

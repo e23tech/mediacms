@@ -9,8 +9,8 @@ class SiteController extends Controller
         $data['comments'] = self::fetchRecommendComments();
         
         $this->setSiteTitle(null);
-        $this->setPageKeyWords(param('siteKeywords'));
-        $this->setPageDescription(param('siteDescription'));
+        $this->setPageKeyWords(param('site_keywords'));
+        $this->setPageDescription(param('site_description'));
         
         cs()->registerMetaTag('all', 'robots');
         
@@ -22,7 +22,6 @@ class SiteController extends Controller
     {
         $criteria = new CDbCriteria();
         $criteria->select = array('t.id', 't.title', 't.thumbnail', 't.state', 't.hottest');
-        $criteria->order = 'id desc';
         $criteria->limit = 4;
         $criteria->scopes = array('hottest', 'published');
         $models = Post::model()->findAll($criteria);
@@ -34,7 +33,6 @@ class SiteController extends Controller
     {
         $criteria = new CDbCriteria();
         $criteria->select = array('t.id', 't.title', 't.thumbnail', 't.state', 't.recommend', 't.summary', 't.content');
-        $criteria->order = 'id desc';
         $criteria->limit = param('recommendPostsCount');
         $criteria->scopes = array('recommend', 'published');
         $models = Post::model()->findAll($criteria);
@@ -127,15 +125,15 @@ class SiteController extends Controller
     private static function fetchLatestPosts()
     {
         $criteria = new CDbCriteria();
-        $criteria->order = 't.istop desc, t.create_time desc, t.id desc';
+        $criteria->order = 't.istop desc, t.create_time desc';
         $criteria->limit = param('postCountOfPage');
-        $criteria->scopes = array('published', 'homeshow');
+        $criteria->scopes = array('homeshow', 'published');
 
         $count = Post::model()->count($criteria);
         $pages = new CPagination($count);
         $pages->setPageSize(param('postCountOfPage'));
         $pages->applyLimit($criteria);
-        $posts = Post::model()->with('category', 'topic')->together()->findAll($criteria);
+        $posts = Post::model()->findAll($criteria);
 
         return array(
             'posts' => $posts,
@@ -162,7 +160,7 @@ class SiteController extends Controller
     
     public function actionTest()
     {
-//         phpinfo();
+        phpinfo();
         exit;
         
         $auth=Yii::app()->authManager;
@@ -171,6 +169,7 @@ class SiteController extends Controller
         $auth->createOperation('delete_post','delete a post');
         $auth->createOperation('enter_admin_system','login into admin system');
         $auth->createOperation('upload_file','upload a file');
+        $auth->createOperation('create_post_in_home','create post in home page');
 
         $bizRule='return Yii::app()->user->id==$params["post"]->user_id;';
         $task=$auth->createTask('update_own_post','update a post by author himself',$bizRule);
@@ -194,7 +193,6 @@ class SiteController extends Controller
         $role->addChild('delete_post');
          
         $auth->assign('admin','1');
-        $auth->assign('admin','2');
         
 
     }

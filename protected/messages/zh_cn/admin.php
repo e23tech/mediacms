@@ -1,4 +1,13 @@
 <?php
+$filter_keyword_alert = <<<EOD
+    <div class="alert-heading">关键词支持三种格式</div>
+    <ul>
+        <li>精确匹配。例如：太阳</li>
+        <li>简单正则匹配。关键词中间可以跳过一定数量的字符，例如：太{5}阳，将会匹配“太”和“阳”中间有0-5个字符的关键词</li>
+        <li>复杂正则匹配。关键词可以是一个完整的正则表达式。如果不熟悉正则表达式，尽量不要使用。</li>
+    </ul>
+EOD;
+
 return array(
     'invalid_request' => '非法请求',
         
@@ -16,6 +25,7 @@ return array(
     'post_tag' => '标签',
     'post_category' => '分类',
     'post_topic' => '主题',
+    'post_special' => '专题',
     'post_comment' => '评论',
     'topic_category' => '主题分类',
     'comment_manage' => '评论管理',
@@ -29,13 +39,18 @@ return array(
     'statistics' => '统计',
     'latest' => '最新',
     'logout_control_center' => '退出登录',
+    'orderid_sort_tip' => '排序提示：数字越大，排的越靠前',
 
     'update' => '更新',
     'updating' => '更新中...',
+    'update_error' => '出错',
     'update_complete' => '更新完成',
     'create' => '新建',
     'edit' => '编辑',
+    'trash' => '回收站',
+    'trash_post' => '扔到回收站',
     'delete' => '删除',
+    'forever_delete' => '永久删除',
     'settop' => '置顶',
     'cancel_top' => '取消置顶',
     'setshow' => '显示',
@@ -43,6 +58,7 @@ return array(
     'cancel_delete' => '取消删除',
     'submit' => '提交',
     'submit_post' => '发表文章',
+    'return_list_page' => '返回列表',
 
     /* PostSearchForm */
     'postid' => '文章ID',
@@ -90,6 +106,15 @@ return array(
     'topic_list_table' => '主题列表',
     'topic_statistics' => '主题统计',
 
+    /* create special */
+    'create_special' => '新建专题',
+    'edit_special' => '编辑专题',
+    'save_special_success' => '{name}&nbsp;保存成功。',
+    'special_list_table' => '专题列表',
+    'special_statistics' => '专题统计',
+    'special_enabled' => '上线',
+    'special_disabled' => '下线',
+
     /* create category */
     'create_category' => '新建分类',
     'edit_category' => '编辑分类',
@@ -100,17 +125,16 @@ return array(
         
     'verify_user' => '审核用户',
     'create_user' => '添加用户',
-    'edit_user' => '修改用户资料',
+    'edit_user' => '修改账号',
     'search_user' => '搜索用户',
-    'today_signup' => '今日注册',
-    'most_active_users' => '最活跃用户',
+    'today_signup_user' => '今日注册',
+    'user_account_list' => '用户列表',
     'user_statistics' => '用户统计',
-    'one_day' => '一天内',
-    'one_week' => '一周内',
-    'one_month' => '一月内',
     'user_create_success' => '{name} 保存成功',
     'user_disabled' => '禁用',
+    'user_forbidden' => '禁用',
     'user_enabled' => '启用',
+    'user_unverify' => '未审核',
     'reset_password' => '重置密码',
     'operation' => '操作',
 
@@ -156,6 +180,19 @@ return array(
     'set_homeshow_post' => '首页显示',
     'cannel_homeshow_post' => '取消首页显示',
     'attachment' => '附件',
+    'avg_score' => '平均分',
+    'post_state' => '状态',
+    'post_state_disabled' => '隐藏',
+    'post_state_enabled' => '显示',
+    'post_state_rejected' => '拒绝',
+    'post_state_trash' => '回收站',
+    'post_state_not_verify' => '未审核',
+    'post_state_marker_disabled' => '隐',
+    'post_state_marker_rejected' => '拒',
+    'post_marker_recommend' => '荐',
+    'post_marker_hottest' => '热',
+    'post_marker_top' => '顶',
+    'post_marker_homeshow' => '首',
 
     'category_is_not_exist' => '该分类不存在',
     'topic_is_not_exist' => '该主题不存在',
@@ -164,6 +201,7 @@ return array(
     'pass_review' => '通过',
     'sethottest' => '热门',
     'setrecommend' => '推荐',
+    'post_preivew' => '预览',
     'post_info_view' => '查看',
     'post_is_not_exist' => '该文章不存在',
     'post_upload_pictures' => '文章图片',
@@ -224,6 +262,16 @@ return array(
     'please_select_file_type' => '请选择文件类型',
     'view_picture' => '查看图片',
     'search_result' => '搜索结果',
+        
+    /* filter keyword manage */
+    'filter_keyword_list' => '敏感词列表',
+    'cofig_filter_keyword_success' => '敏感词保存成功',
+    'filter_keyword_manage' => '敏感词管理',
+    'create_filter_keyword' => '添加关键词',
+    'multi_create_filter_keyword' => '批量添加',
+    'filter_keyword_alert' => $filter_keyword_alert,
+    'occurred_following_errors' => '发生以下错误',
+    'kwcontent_format_tip' => '一行一个关键词，如果有替换词，使用逗号(,)分隔，例如：傻子,文明用语',
 );
 
 

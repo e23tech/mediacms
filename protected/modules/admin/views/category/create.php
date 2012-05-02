@@ -19,11 +19,13 @@
         <?php echo CHtml::activeLabel($model, 'orderid', array('class'=>'control-label'));?>
         <div class="controls">
             <?php echo CHtml::activeTextField($model, 'orderid', array('class'=>'input-mini'));?>
+            <span class="help-info"><?php echo t('orderid_sort_tip', 'admin');?></span>
             <?php if($model->hasErrors('orderid')):?><p class="help-block"><?php echo $model->getError('orderid');?></p><?php endif;?>
         </div>
     </div>
     <div class="form-actions">
         <input type="submit" value="<?php echo t('submit', 'admin');?>" class="btn btn-primary" />
+        <a class="btn" href="<?php echo url('admin/category/list');?>"><?php echo t('return_list_page', 'admin');?></a>
     </div>
 </fieldset>
 <?php echo CHtml::endForm();?>

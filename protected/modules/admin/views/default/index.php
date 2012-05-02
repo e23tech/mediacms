@@ -30,6 +30,8 @@
                         <li class="nav-header">附件</li>
                         <li><?php echo l(t('upload_file_search', 'admin'), url('admin/upload/search'), array('target'=>'main'));?></li>
                         <li><?php echo l(t('upload_file_list', 'admin'), url('admin/upload/list'), array('target'=>'main'));?></li>
+                        <li class="divider"></li>
+                        <li><?php echo l(t('trash', 'admin'), url('admin/post/trash'), array('target'=>'main'));?></li>
                     </ul>
                 </li>
                 <li class="dropdown">
@@ -39,6 +41,10 @@
                         <li><?php echo l(t('create_topic', 'admin'), url('admin/topic/create'), array('target'=>'main'));?></li>
                         <li><?php echo l(t('topic_list_table', 'admin'), url('admin/topic/list'), array('target'=>'main'));?></li>
                         <!-- <li><?php echo l(t('topic_statistics', 'admin'), url('admin/topic/statistics'), array('target'=>'main'));?></li> -->
+                        <li class="divider"></li>
+                        <li class="nav-header"><?php echo t('post_special', 'admin');?></li>
+                        <li><?php echo l(t('create_special', 'admin'), url('admin/special/create'), array('target'=>'main'));?></li>
+                        <li><?php echo l(t('special_list_table', 'admin'), url('admin/special/list'), array('target'=>'main'));?></li>
                         <li class="divider"></li>
                         <li class="nav-header"><?php echo t('post_category', 'admin');?></li>
                         <li><?php echo l(t('create_category', 'admin'), url('admin/category/create'), array('target'=>'main'));?></li>
@@ -69,9 +75,8 @@
                         <li><?php echo l(t('search_user', 'admin'), url('admin/user/search'), array('target'=>'main'));?></li>
                         <li class="divider"></li>
                         <li class="nav-header"><?php echo t('statistics', 'admin');?></li>
-                        <!-- <li><?php echo l(t('most_active_users', 'admin'), url('admin/user/mostactive', array('day'=>14)), array('target'=>'main'));?></li> -->
-                        <li><?php echo l(t('today_signup', 'admin'), url('admin/user/today'), array('target'=>'main'));?></li>
-                        <!-- <li><?php echo l(t('user_statistics', 'admin'), url('admin/user/statistics'), array('target'=>'main'));?></li> -->
+                        <li><?php echo l(t('today_signup_user', 'admin'), url('admin/user/today'), array('target'=>'main'));?></li>
+                        <li><?php echo l(t('user_account_list', 'admin'), url('admin/user/list'), array('target'=>'main'));?></li>
                     </ul>
                 </li>
                 <!--
@@ -101,10 +106,15 @@
                         <li><?php echo l(t('display_template', 'admin'), url('admin/config/view', array('categoryid'=>AdminConfig::CATEGORY_DISPLAY_TEMPLATE)), array('target'=>'main'));?></li>
                         <li><?php echo l(t('display_ui', 'admin'), url('admin/config/view', array('categoryid'=>AdminConfig::CATEGORY_DISPLAY_UI)), array('target'=>'main'));?></li>
                         <li class="divider"></li>
+                        <li class="nav-header"><?php echo t('filter_keyword_manage', 'admin');?></li>
+                        <li><?php echo l(t('multi_create_filter_keyword', 'admin'), url('admin/filterkeyword/create'), array('target'=>'main'));?></li>
+                        <li><?php echo l(t('filter_keyword_list', 'admin'), url('admin/filterkeyword/list'), array('target'=>'main'));?></li>
+                        <!--
                         <li class="nav-header"><?php echo t('sns_config_params', 'admin');?></li>
                         <li><?php echo l(t('sns_interface', 'admin'), url('admin/config/view', array('categoryid'=>AdminConfig::CATEGORY_SNS_INTERFACE)), array('target'=>'main'));?></li>
                         <li><?php echo l(t('sns_stats', 'admin'), url('admin/config/view', array('categoryid'=>AdminConfig::CATEGORY_SNS_STATS)), array('target'=>'main'));?></li>
                         <li><?php echo l(t('sns_template', 'admin'), url('admin/config/view', array('categoryid'=>AdminConfig::CATEGORY_SNS_TEMPLATE)), array('target'=>'main'));?></li>
+                         -->
                         <li class="divider"></li>
                         <li class="nav-header"><?php echo t('custom_config_params', 'admin');?></li>
                         <li><?php echo l(t('custom_config_params', 'admin'), url('admin/config/view', array('categoryid'=>AdminConfig::CATEGORY_CUSTOM)), array('target'=>'main'));?></li>
@@ -141,16 +151,39 @@
         <li><?php echo l(t('latest_comment', 'admin'), url('admin/comment/latest'), array('target'=>'main'));?></li>
         <li class="nav-header"><?php echo t('user_manage', 'admin');?></li>
         <li><?php echo l(t('verify_user', 'admin'), url('admin/user/verify'), array('target'=>'main'));?></li>
-        <li><?php echo l(t('today_signup', 'admin'), url('admin/user/today'), array('target'=>'main'));?></li>
+        <li><?php echo l(t('today_signup_user', 'admin'), url('admin/user/today'), array('target'=>'main'));?></li>
     </ul>
 </div>
 <div class="admin-container">
     <iframe id="admin-iframe" src="<?php echo url('admin/default/welcome');?>" name="main"></iframe>
 </div>
+
+<script type="text/javascript">
+$(function(){
+	$(document).on('click', '.admin-sidebar li a', function(event){
+		var li = $(this).parent();
+		if (li.hasClass('active')) return true;
+
+		$('li.dropdown').removeClass('active');
+		$('.dropdown-menu  li').removeClass('active');
+		li.siblings().removeClass('active');
+		li.addClass('active');
+	});
+	$(document).on('click', '.dropdown-menu li a', function(event){
+		var li = $(this).parent();
+		if (li.hasClass('active')) return true;
+
+		$('.admin-sidebar li').removeClass('active');
+		$('li.dropdown').removeClass('active');
+		$('.dropdown-menu  li').removeClass('active');
+		$(this).parents('.dropdown').addClass('active');
+		li.addClass('active');
+	});
+});
+</script>
 <script type="text/javascript" src="<?php echo sbu('libs/bootstrap/js/bootstrap.min.js');?>"></script>
 <script type="text/javascript" src="<?php echo sbu('scripts/beta-admin.js');?>"></script>
+
 </body>
 </html>
-
-
 

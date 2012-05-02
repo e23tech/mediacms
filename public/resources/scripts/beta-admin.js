@@ -22,10 +22,6 @@ $(function(){
 		tip.html('请求完成.').delay(5000).fadeOut('slow');
 	});
 	
-	$(document).on('click', '#beta-reload-current', function(event){
-		window.location.reload();
-	});
-	
 	$('[rel=tooltip]').tooltip();
 });
 
@@ -65,7 +61,31 @@ var BetaAdmin = {
 				BetaAdmin.showAjaxMessage('发生错误.');
 		});
 		jqXhr.fail(function(){
-			BetaAdmin.showAjaxMessage('请求错误.');
+			BetaAdmin.showAjaxMessage('request error.');
+		});
+	},
+	trashPost: function(event){
+		event.preventDefault();
+		
+		var confirm = window.confirm(event.data.onfirmText);
+		if (!confirm) return ;
+		
+		var tthis = $(this);
+		var jqXhr = $.ajax({
+			url: $(this).attr('href'),
+			dataType: 'jsonp',
+			type: 'post',
+			cache: false,
+			beforeSend: function(){}
+		});
+		jqXhr.done(function(data){
+			if (data.errno == 0)
+				tthis.parents('tr').fadeOut('fast', function(){$(this).remove();});
+			else
+				BetaAdmin.showAjaxMessage('发生错误.');
+		});
+		jqXhr.fail(function(){
+			BetaAdmin.showAjaxMessage('request error.');
 		});
 	},
 	deleteComment: function(event) {
@@ -88,7 +108,7 @@ var BetaAdmin = {
 				BetaAdmin.showAjaxMessage('发生错误.');
 		});
 		jqXhr.fail(function(){
-			BetaAdmin.showAjaxMessage('请求错误.');
+			BetaAdmin.showAjaxMessage('request error.');
 		});
 	},
 	deleteMultiComments: function(event) {
@@ -120,7 +140,7 @@ var BetaAdmin = {
 			});
 		}),
 		jqXhr.fail(function(){
-			BetaAdmin.showAjaxMessage('请求错误.');
+			BetaAdmin.showAjaxMessage('request error.');
 		});
 	},
 	verifyMultiComments: function(event) {
@@ -149,7 +169,7 @@ var BetaAdmin = {
 			});
 		}),
 		jqXhr.fail(function(){
-			BetaAdmin.showAjaxMessage('请求错误.');
+			BetaAdmin.showAjaxMessage('request error.');
 		});
 	},
 	recommendMultiComments: function(event) {
@@ -178,7 +198,7 @@ var BetaAdmin = {
 			});
 		}),
 		jqXhr.fail(function(){
-			BetaAdmin.showAjaxMessage('请求错误.');
+			BetaAdmin.showAjaxMessage('request error.');
 		});
 	},
 	hottestMultiComments: function(event) {
@@ -207,10 +227,10 @@ var BetaAdmin = {
 			});
 		}),
 		jqXhr.fail(function(){
-			BetaAdmin.showAjaxMessage('请求错误.');
+			BetaAdmin.showAjaxMessage('request error.');
 		});
 	},
-	ajaxSetPostBoolColumn: function(event) {
+	ajaxSetBooleanColumn: function(event) {
 		event.preventDefault();
 		var tthis = $(this);
 		var jqXhr = $.ajax({
@@ -221,33 +241,15 @@ var BetaAdmin = {
 		    beforeSend: function(){}
 		});
 		jqXhr.done(function(data){
-			if (data.errno == BETA_NO)
+			if (data.errno == BETA_NO) {
 			    tthis.text(data.label);
+				tthis.parents('tr').find('.row-state').text(data.label).toggleClass('label-important label-success');
+			}
 			else
 				BetaAdmin.showAjaxMessage('发生错误.');
 		});
 		jqXhr.fail(function(){
-			BetaAdmin.showAjaxMessage('请求错误.');
-		});
-	},
-	ajaxSetCommentBoolColumn: function(event) {
-		event.preventDefault();
-		var tthis = $(this);
-		var jqXhr = $.ajax({
-		    url: $(this).attr('href'),
-		    dataType: 'jsonp',
-		    type: 'post',
-		    cache: false,
-		    beforeSend: function(){}
-		});
-		jqXhr.done(function(data){
-			if (data.errno == BETA_NO)
-			    tthis.text(data.label);
-			else
-				BetaAdmin.showAjaxMessage('发生错误.');
-		});
-		jqXhr.fail(function(){
-			BetaAdmin.showAjaxMessage('请求错误.');
+			BetaAdmin.showAjaxMessage('request error.');
 		});
 	},
 	deleteMultiPosts: function(event) {
@@ -279,7 +281,39 @@ var BetaAdmin = {
 			});
 		}),
 		jqXhr.fail(function(){
-			BetaAdmin.showAjaxMessage('请求错误.');
+			BetaAdmin.showAjaxMessage('request error.');
+		});
+	},
+	trashMultiPosts: function(event) {
+		event.preventDefault();
+		
+		var checkboxs = $('input:checked');
+		if (checkboxs.length == 0) return;
+		
+		var confirm = window.confirm(event.data.onfirmText);
+		if (!confirm) return ;
+		
+		var commentIds = [];
+		checkboxs.each(function(index, element){
+			commentIds.push($(element).val());
+		});
+		
+		var tthis = $(this);
+		var jqXhr = $.ajax({
+			url: $(this).attr('data-src'),
+			dataType: 'jsonp',
+			type: 'post',
+			cache: false,
+			data: $.param({ids:commentIds}),
+			beforeSend: function(){}
+		});
+		jqXhr.done(function(data){
+			$.each(data.success, function(index, value){
+				$(':checkbox[value='+ value +']').parents('tr').remove();
+			});
+		}),
+		jqXhr.fail(function(){
+			BetaAdmin.showAjaxMessage('request error.');
 		});
 	},
 	recommendMultiPosts: function(event) {
@@ -304,11 +338,11 @@ var BetaAdmin = {
 		});
 		jqXhr.done(function(data){
 			$.each(data.success, function(index, value){
-				$(':checkbox[value='+ value +']').parents('tr').remove();
+				window.location.reload();
 			});
 		}),
 		jqXhr.fail(function(){
-			BetaAdmin.showAjaxMessage('请求错误.');
+			BetaAdmin.showAjaxMessage('request error.');
 		});
 	},
 	hottestMultiPosts: function(event) {
@@ -333,11 +367,11 @@ var BetaAdmin = {
 		});
 		jqXhr.done(function(data){
 			$.each(data.success, function(index, value){
-				$(':checkbox[value='+ value +']').parents('tr').remove();
+				window.location.reload();
 			});
 		}),
 		jqXhr.fail(function(){
-			BetaAdmin.showAjaxMessage('请求错误.');
+			BetaAdmin.showAjaxMessage('request error.');
 		});
 	},
 	verifyMultiPosts: function(event) {
@@ -366,7 +400,7 @@ var BetaAdmin = {
 			});
 		}),
 		jqXhr.fail(function(){
-			BetaAdmin.showAjaxMessage('请求错误.');
+			BetaAdmin.showAjaxMessage('request error.');
 		});
 	},
 	rejectMultiPosts: function(event) {
@@ -395,7 +429,127 @@ var BetaAdmin = {
 			});
 		}),
 		jqXhr.fail(function(){
-			BetaAdmin.showAjaxMessage('请求错误.');
+			BetaAdmin.showAjaxMessage('request error.');
+		});
+	},
+	quickUpdate: function(event){
+		event.preventDefault();
+		var tthis = $(this);
+		var form = tthis.parents('form');
+		var jqXhr = $.ajax({
+			url: form.attr('action'),
+			dataType: 'jsonp',
+			type: 'post',
+			cache: false,
+			data: form.serialize(),
+			beforeSend: function(){
+				tthis.button('loading');
+			}
+		});
+		jqXhr.done(function(data){
+			tthis.button('complete');
+		});
+		jqXhr.fail(function(){
+			tthis.button('error');
+		});
+		jqXhr.always(function(){
+			setTimeout(function(){
+				tthis.button('reset');
+				tthis.button('toggle');
+			}, 1000);
+		});
+	},
+	updateFilterKeywordRow: function(event){
+		event.preventDefault();
+		var tthis = $(this);
+		var tr = tthis.parents('tr');
+		var url = tr.attr('data-url');
+		if (url.length == 0) return false;
+		
+		var data = tr.find('input').serialize();
+		var jqXhr = $.ajax({
+			url: url,
+			dataType: 'jsonp',
+			type: 'post',
+			cache: false,
+			data: data,
+			beforeSend: function(){
+				tthis.button('loading');
+			}
+		});
+		jqXhr.done(function(data){
+			if (data.errno == 0)
+				tthis.button('complete');
+			else
+				tthis.button('error');
+		});
+		jqXhr.fail(function(){
+			BetaAdmin.showAjaxMessage('request error.');
+		});
+		jqXhr.always(function(){
+			setTimeout(function(){
+				tthis.button('reset');
+				tthis.button('toggle');
+			}, 1000);
+		});
+	},
+	enabledMultiUsers: function(event){
+		event.preventDefault();
+
+		var checkboxs = $('input:checked');
+		if (checkboxs.length == 0) return;
+		
+		var commentIds = [];
+		checkboxs.each(function(index, element){
+			commentIds.push($(element).val());
+		});
+		
+		var tthis = $(this);
+		var jqXhr = $.ajax({
+			url: $(this).attr('data-src'),
+			dataType: 'jsonp',
+			type: 'post',
+			cache: false,
+			data: $.param({ids:commentIds}),
+			beforeSend: function(){}
+		});
+		jqXhr.done(function(data){
+			$.each(data.success, function(index, value){
+				$(':checkbox[value='+ value +']').parents('tr').find('.row-state').toggleClass('label-important label-success').text(data.label);
+			});
+		}),
+		jqXhr.fail(function(){
+			BetaAdmin.showAjaxMessage('request error.');
+		});
+	},
+	forbiddenMultiUsers: function(event){
+		event.preventDefault();
+
+		var checkboxs = $('input:checked');
+		if (checkboxs.length == 0) return;
+		
+		var commentIds = [];
+		checkboxs.each(function(index, element){
+			commentIds.push($(element).val());
+		});
+		
+		var tthis = $(this);
+		var jqXhr = $.ajax({
+			url: $(this).attr('data-src'),
+			dataType: 'jsonp',
+			type: 'post',
+			cache: false,
+			data: $.param({ids:commentIds}),
+			beforeSend: function(){}
+		});
+		jqXhr.done(function(data){
+			$.each(data.success, function(index, value){
+				$(':checkbox[value='+ value +']').parents('tr').find('.row-state').toggleClass('label-important label-success').text(data.label);
+			});
+		}),
+		jqXhr.fail(function(){
+			BetaAdmin.showAjaxMessage('request error.');
 		});
 	}
 };
+

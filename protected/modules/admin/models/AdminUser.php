@@ -4,7 +4,6 @@
  *
  * @property string $infoUrl
  * @property string $editurl
- * @property string $deleteUrl
  * @property string $verifyUrl
  * @property string $stateText;
  */
@@ -19,6 +18,15 @@ class AdminUser extends User
         return parent::model($className);
     }
 
+    public static function stateLabels()
+    {
+        return array(
+            self::STATE_ENABLED => t('user_enabled', 'admin'),
+            self::STATE_FORBIDDEN => t('user_forbidden', 'admin'),
+            self::STATE_UNVERIFY => t('user_unverify', 'admin'),
+        );
+    }
+    
     public function getInfoUrl()
     {
         return url('admin/user/info', array('id'=>$this->id));
@@ -29,14 +37,9 @@ class AdminUser extends User
         return l(t('edit', 'admin'), url('admin/user/create', array('id'=>$this->id)));
     }
     
-    public function getDeleteUrl()
-    {
-        return l(t('delete', 'admin'), url('admin/user/delete', array('id'=>$this->id)));
-    }
-    
     public function getVerifyUrl()
     {
-        $text = t(($this->state == AdminUser::STATE_DISABLED) ? 'user_enabled' : 'user_disabled', 'admin');
+        $text = t(($this->state == AdminUser::STATE_UNVERIFY) ? 'user_enabled' : 'user_disabled', 'admin');
         return l($text, url('admin/user/setVerify', array('id'=>$this->id)), array('class'=>'set-verify'));
     }
     
@@ -47,10 +50,11 @@ class AdminUser extends User
     
     public function getStateText()
     {
+        $url = url('admin/user/setVerify', array('id'=>$this->id));
         if ($this->state == self::STATE_ENABLED)
-	        $html = '<span class="label label-success">' . t('user_enabled', 'admin') . '</span>';
+            $html = l(t('user_enabled', 'admin'), $url, array('class'=>'label label-success row-state'));
 	    else
-	        $html = $html = '<span class="label label-important">' . t('user_disabled', 'admin') . '</span>';
+	        $html = l(t('user_forbidden', 'admin'), $url, array('class'=>'label label-important row-state'));
 	    
 	    return $html;
     }
@@ -63,7 +67,7 @@ class AdminUser extends User
          
         if ($sort) {
             $sort  = new CSort(__CLASS__);
-            $sort->defaultOrder = 'id desc';
+            $sort->defaultOrder = 't.id desc';
             $sort->applyOrder($criteria);
         }
          

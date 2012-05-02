@@ -5,9 +5,19 @@ class PostController extends AdminController
     public function filters()
     {
         return array(
-            'ajaxOnly + setVerify, setHottest, setRecommend, setDelete, multiDelete',
-            'postOnly + setVerify, setHottest, setRecommend, setDelete, multiDelete',
+            'ajaxOnly + setVerify, quickUpdate, setDelete, setTrash, multiTrash, multiDelete, multiVerify, multiReject, multiRecommend, multiHottest',
+            'postOnly + setVerify, quickUpdate, setDelete, setTrash, multiTrash,, multiDelete, multiVerify, multiReject, multiRecommend, multiHottest',
         );
+    }
+    
+    public function actionInfo($id)
+    {
+        $id = (int)$id;
+        $model = AdminPost::model()->findByPk($id);
+        if ($model === null)
+            throw new CHttpException(404, t('post_is_not_exist', 'admin'));
+        
+        $this->render('info', array('model'=>$model));
     }
     
 	public function actionCreate($id = 0)
@@ -16,7 +26,7 @@ class PostController extends AdminController
 	    if ($id === 0) {
 	        $model = new AdminPost();
 	        $model->homeshow = user()->checkAccess('create_post_in_home') ? BETA_YES : BETA_NO;
-	        $model->state = BETA_YES;
+	        $model->state = user()->checkAccess('editor') ? AdminPost::STATE_ENABLED : AdminPost::STATE_NOT_VERIFY;
 	        $this->adminTitle = t('create_post');
 	    }
 	    elseif ($id > 0) {
@@ -28,7 +38,9 @@ class PostController extends AdminController
 	    
 	    if (request()->getIsPostRequest() && isset($_POST['AdminPost'])) {
 	        $model->attributes = $_POST['AdminPost'];
-	        $model->post_type = AdminPost::TYPE_POST;
+	        // 此处如果以后有多种文章模型了，这一句可以去掉。
+	        if ($model->getIsNewRecord())
+    	        $model->post_type = AdminPost::TYPE_POST;
 	        if ($model->save()) {
 	            $this->afterPostSave($model);
 	            user()->setFlash('save_post_result', t('save_post_success', 'admin', array('{title}'=>$model->title, '{url}'=>$model->url)));
@@ -37,8 +49,10 @@ class PostController extends AdminController
 	    }
 	    else {
 	        $key = param('sess_post_create_token');
-            if (!app()->session->contains($key) || empty(app()->session[$key]))
-                app()->session->add($key, uniqid('beta', true));
+            if (!app()->session->contains($key) || empty(app()->session[$key])) {
+                $token = $model->getIsNewRecord() ? uniqid('beta', true) : $model->id;
+                app()->session->add($key, $token);
+    	    }
             else {
                 $token = app()->session[$key];
                 $tempPictures = Upload::model()->findAllByAttributes(array('token'=>$token));
@@ -54,24 +68,13 @@ class PostController extends AdminController
 	private function afterPostSave(AdminPost $post)
 	{
 	    $key = param('sess_post_create_token');
-        if (app()->session->contains($key) && $token = app()->session[$key]) {
+        if (app()->session->contains($key) && $token = app()->session[$key] && !is_numeric($token)) {
             if (!$post->hasErrors()) {
                 $attributes = array('post_id'=>$post->id, 'token'=>'');
                 AdminUpload::model()->updateAll($attributes, 'token = :token', array(':token'=>$token));
                 app()->session->remove($key);
             }
         }
-	}
-	
-	public function actionInfo($id)
-	{
-	    $id = (int)$id;
-	    if ($id <= 0)
-	        throw new CHttpException(404, 'post is not found');
-	    
-	    $model = AdminPost::model()->findByPk($id);
-	    
-	    $this->render('info', array('model'=>$model));
 	}
 	
 	public function actionLatest($cid = 0, $tid = 0)
@@ -108,10 +111,11 @@ class PostController extends AdminController
 	public function actionVerify()
 	{
 	    $criteria = new CDbCriteria();
-	    $criteria->addColumnCondition(array('t.state'=>AdminPost::STATE_DISABLED));
+	    $criteria->addColumnCondition(array('t.state'=>AdminPost::STATE_NOT_VERIFY));
 	    $data = AdminPost::fetchList($criteria);
 	    
-	    $this->render('list_noverify', $data);
+	    $this->adminTitle = t('noverify_post_list_table', 'admin');
+	    $this->render('list', $data);
 	}
 	
 	public function actionSearch()
@@ -164,6 +168,7 @@ class PostController extends AdminController
 	    $this->render('list', $data);
 	}
 	
+	// @todo 回收站，暂时不用
 	public function actionTrash()
 	{
 	    $criteria = new CDbCriteria();
@@ -172,7 +177,29 @@ class PostController extends AdminController
 	     
 	    $this->render('list', $data);
 	}
+	
+	public function actionQuickUpdate($id, $callback)
+	{
+	    $id = (int)$id;
+	    
+	    if ($id <= 0)
+	        throw new CHttpException(500, t('invalid_request', 'admin'));
 
+	    $model = AdminPost::model()->findByPk($id);
+	    if ($model === null)
+	        throw new CHttpException(404, t('post_is_not_exist', 'admin'));
+	     
+        $model->attributes = $_POST['AdminPost'];
+        // @todo 暂时没用，做快速发表时会用到
+        if ($model->getIsNewRecord())
+	        $model->post_type = AdminPost::TYPE_POST;
+        
+        $attributes = array('state', 'hottest', 'recommend', 'istop', 'homeshow', 'disable_comment');
+        $result = (int)$model->save(true, $attributes);
+        
+        BetaBase::jsonp($callback, $result);
+	}
+	
     public function actionSetVerify($id, $callback)
 	{
 	    $id = (int)$id;
@@ -196,8 +223,7 @@ class PostController extends AdminController
 	            'errno' => BETA_NO,
 	            'label' => t($model->state == AdminPost::STATE_ENABLED ? 'sethide' : 'setshow', 'admin')
 	        );
-	        echo $callback . '(' . CJSON::encode($data) . ')';
-	        exit(0);
+	        BetaBase::jsonp($callback, $data);
 	    }
 	}
 
@@ -213,8 +239,25 @@ class PostController extends AdminController
 	            'errno' => BETA_NO,
 	            'label' => t('delete_success', 'admin'),
 	        );
-	        echo $callback . '(' . CJSON::encode($data) . ')';
-	        exit(0);
+	        BetaBase::jsonp($callback, $data);
+	    }
+	    else
+	        throw new CHttpException(500);
+	}
+
+	public function actionSetTrash($id, $callback)
+	{
+	    $id = (int)$id;
+	    $model = AdminPost::model()->findByPk($id);
+	    if ($model === null)
+	        throw new CHttpException(404);
+	     
+	    if ($model->trash()) {
+	        $data = array(
+	            'errno' => BETA_NO,
+	            'label' => t('delete_success', 'admin'),
+	        );
+	        BetaBase::jsonp($callback, $data);
 	    }
 	    else
 	        throw new CHttpException(500);
@@ -244,8 +287,34 @@ class PostController extends AdminController
     	    'success' => $successIds,
     	    'failed' => $failedIds,
 	    );
-	    echo $callback . '(' . CJSON::encode($data) . ')';
-	    exit(0);
+	    BetaBase::jsonp($callback, $data);
+	}
+	
+	/**
+	 * 批量将文章扔到回收站
+	 * @param array $ids ID数组
+	 * @param string $callback jsonp回调函数，自动赋值
+	 */
+	public function actionMultiTrash($callback)
+	{
+	    $ids = (array)request()->getPost('ids');
+	    $successIds = $failedIds = array();
+	    foreach ($ids as $id) {
+	        $model = AdminPost::model()->findByPk($id);
+	        if ($model === null)
+	            continue;
+	        	
+	        $result = $model->trash();
+	        if ($result)
+	            $successIds[] = $id;
+	        else
+	            $failedIds[] = $id;
+	    }
+	    $data = array(
+    	    'success' => $successIds,
+    	    'failed' => $failedIds,
+	    );
+	    BetaBase::jsonp($callback, $data);
 	}
 	
 
@@ -274,8 +343,7 @@ class PostController extends AdminController
     	    'success' => $successIds,
     	    'failed' => $failedIds,
 	    );
-	    echo $callback . '(' . CJSON::encode($data) . ')';
-	    exit(0);
+	    BetaBase::jsonp($callback, $data);
 	}
 
 	/**
@@ -302,8 +370,7 @@ class PostController extends AdminController
     	    'success' => $successIds,
     	    'failed' => $failedIds,
 	    );
-	    echo $callback . '(' . CJSON::encode($data) . ')';
-	    exit(0);
+	    BetaBase::jsonp($callback, $data);
 	}
 	
 	/**
@@ -332,8 +399,7 @@ class PostController extends AdminController
     	    'success' => $successIds,
     	    'failed' => $failedIds,
 	    );
-	    echo $callback . '(' . CJSON::encode($data) . ')';
-	    exit(0);
+	    BetaBase::jsonp($callback, $data);
 	}
 	
 	/**
@@ -363,8 +429,8 @@ class PostController extends AdminController
     	    'success' => $successIds,
     	    'failed' => $failedIds,
 	    );
-	    echo $callback . '(' . CJSON::encode($data) . ')';
-	    exit(0);
+	    BetaBase::jsonp($callback, $data);
 	}
 
+	
 }
