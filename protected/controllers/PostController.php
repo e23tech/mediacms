@@ -1,6 +1,20 @@
 <?php
 class PostController extends Controller
 {
+    public function filters()
+    {
+        return array(
+            'ajaxOnly + visit',
+            'postOnly + visit',
+        );
+    }
+    
+    // @todo 临时动作
+    public function actionGoto($id)
+    {
+        $this->redirect(url('post/show', array('id'=>$id)));
+    }
+    
     public function actionShow($id)
     {
         $id = (int)$id;
@@ -15,7 +29,7 @@ class PostController extends Controller
             $post = Post::model()->findByPk($id);
         
         if (null === $post)
-            throw new CHttpException(404, t('post_is_not_found'));
+            throw new CHttpException(403, t('post_is_not_found'));
 
         $comments = Comment::fetchList($id);
         $hotComments = Comment::fetchHotList($id);
@@ -39,7 +53,7 @@ class PostController extends Controller
     {
         $callback = strip_tags(trim($callback));
         $id = (int)$_POST['id'];
-        if (!request()->getIsAjaxRequest() || !request()->getIsPostRequest() || $id <= 0)
+        if ($id <= 0)
             throw new CHttpException(500);
         
         $post = Post::model()->findByPk($id);
@@ -142,5 +156,5 @@ class PostController extends Controller
             'postid'=>$postid,
         ));
     }
-    
+
 }
