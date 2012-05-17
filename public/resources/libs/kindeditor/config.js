@@ -1,13 +1,14 @@
 var summaryHtmlTags = {
+    span: ['.color', '.text-decoration', '.font-weight'],
     a: ['href', 'target', 'name'],
     embed: ['src', 'width', 'height', 'type', 'loop', 'autostart', 'quality', '.width', '.height', 'align', 'allowscriptaccess'],
-    img: ['src', 'width', 'height', 'border', 'alt', 'title', '.width', '.height'],
-    p: ['.text-align'],
+    img: ['src', 'width', 'height', 'border', 'alt', 'title', 'align', '.width', '.height'],
+    p: ['align', '.text-align'],
     'div,strong,b,sub,sup,em,i,u,strike': []
 };
 
 var contentHtmlTags = {
-    span: ['.color', '.text-decoration'],
+    span: ['.color', '.text-decoration', '.font-weight', '.font-size'],
     div: [
             'align', '.border', '.margin', '.padding', '.text-align', '.color',
             '.background-color', '.font-size', '.font-family', '.font-weight', '.background',
@@ -26,7 +27,7 @@ var contentHtmlTags = {
     ],
     a: ['href', 'target', 'name'],
     embed: ['src', 'width', 'height', 'type', 'loop', 'autostart', 'quality', '.width', '.height', 'align', 'allowscriptaccess', 'flashvars'],
-    img: ['src', 'width', 'height', 'border', 'alt', 'title', '.width', '.height'],
+    img: ['src', 'width', 'height', 'border', 'alt', 'title', 'align', '.width', '.height'],
     'p,ol,ul,li,blockquote,h1,h2,h3,h4,h5,h6': [
             'align', '.text-align', '.color', '.background-color', '.font-size', '.font-family', '.background',
             '.font-weight', '.font-style', '.text-decoration', '.vertical-align', '.text-indent', '.margin-left'
@@ -78,10 +79,10 @@ var KEConfig = {
 		allowMediaUpload: true,
 		htmlTags: summaryHtmlTags,
 		bodyClass: 'beta-ke-content beta-post-content',
-		items: ['undo', 'redo', '|', 'plainpaste', 'wordpaste', 'fontname', 'fontsize', 'forecolor', 'hilitecolor', 'insertorderedlist',
+		items: ['source', '|', 'undo', 'redo', '|', 'plainpaste', 'wordpaste', 'fontname', 'fontsize', 'forecolor', 'hilitecolor', 'insertorderedlist',
 	        'insertunorderedlist', 'bold', 'italic', 'underline', 'strikethrough',
 	        '|', 'image', 'flash', 'media', 'link', 'unlink',
-	        '|', 'selectall', 'clearhtml', 'removeformat', '|', 'source']
+	        '|', 'selectall', 'clearhtml', 'removeformat']
 	},
 	adminfull: {
 		height:450,
@@ -94,13 +95,12 @@ var KEConfig = {
 		allowMediaUpload: true,
 		htmlTags: contentHtmlTags,
 		bodyClass: 'beta-ke-content beta-post-content',
-		uploadJson: 'javascript:void(0)',
-		items: ['undo', 'redo', '|', 'cut', 'copy', 'paste', 'plainpaste', 'wordpaste',
-	        '|', 'justifyleft', 'justifycenter', 'justifyright', 'justifyfull', 'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', 'subscript', 'superscript',
-	        '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline', 'strikethrough', '/',
+		items: ['source', '|', 'undo', 'redo', '|', 'cut', 'copy', 'paste', 'plainpaste', 'wordpaste',
+	        '|', 'justifyleft', 'justifycenter', 'justifyright', 'justifyfull', 'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', 'subscript', 'superscript', '|', 'link', 'unlink', 'selectall', 'clearhtml', 'removeformat', 'quickformat',
+	        '/', 'fontname', 'fontsize', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline', 'strikethrough',
 	        '|', 'image', 'flash', 'media', 'table', 'hr', 'emoticons',
-	        '|', 'map', 'code', 'pagebreak', '|', 'link', 'unlink', 'selectall', 'clearhtml', 'removeformat', 'quickformat',
-	        '|', 'fullscreen', 'preview', 'source']
+	        '|', 'map', 'code', 'pagebreak',
+	        '|', 'fullscreen', 'preview']
 
 	}
 };

@@ -1,5 +1,8 @@
 <?php
 return array(
+    'site_home' => '首页',
+    'nav_topic' => '主题',
+    'nav_contribute' => '投稿',
     'guest_name' => '匿名人士',
     'post_is_not_found' => '此文章不存在',
     'topic_is_not_found' => '主题不存在',
@@ -109,6 +112,8 @@ return array(
 
     /* Tag model */
     'tag_name' => '标签名称',
+    'tag_posts' => '标签：{name}',
+    'tag_posts_page_description' => '与{name}标签相关的文章',
 
     /*
      * model Comment attributeLabels
@@ -141,7 +146,7 @@ return array(
     'hottest_posts' => '热门排行',
     'latest_posts' => '最新发布',
     'relate_posts' => '相关文章',
-    'no_posts' => '当前暂无文章',
+    'no_posts' => '暂无文章',
     'recommend_posts' => '编辑推荐',
     'recommend_comments' => '网友精彩点评',
         
@@ -155,6 +160,7 @@ return array(
      * layout
      */
     'return_top' => '返回顶部 ^',
+    'return_site_home' => '返回网站首页',
 
     /*
      * post show
@@ -196,13 +202,17 @@ return array(
     'post_contributor_email' => '您的邮箱',
     'you_do_not_have_enough_permissions' => '您没有上传文件的权限',
     'post_upload_temp_pictures' => '刚刚上传的图片',
+    'continue_contribute' => '再投递一篇',
+    'view_contribute_post' => '查看刚才投递的文章',
 
     /* topic */
     'all_topic_list' => '所有主题列表',
     'topic_posts' => '专题：{name}',
+    'topic_posts_page_description' => '与{name}专题相关的文章',
 
     /* category */
     'category_posts' => '分类：{name}',
+    'category_posts_page_description' => '与{name}分类相关的文章',
 
     /* BetaHottestPosts */
     'special_token_is_null' => 'token不能为空',
@@ -217,6 +227,10 @@ return array(
     'please_agree_policy' => '请同意服务条款和协议',
     'please_input_your_nickname' => '请输入您的大名',
     'email_or_password_error' => '邮箱或密码错误',
+        
+    /* feed */
+    'category_feed' => ' 分类目录Feed',
+    'topic_feed' => ' 主题目录Feed',
 
     /* topic/list */
     'all_topics_description' => '所有主题列表',
@@ -224,6 +238,9 @@ return array(
     /* site */
     'site_announce' => '除非特别注明，本站所有文章均不代表本站观点。报道中出现的商标属于其合法持有人。交流时请遵守理性，宽容，换位思考的原则。',
     'site_content_share_announce' => '除非特别声明，本站所有内容遵守<a href="http://creativecommons.org/licenses/by-nc-sa/2.5/" target="_blank">CC Creative Commons License.</a>',
+        
+    /* error page */
+    'site_page_error_tip' => '<h2>该页无法显示</h2><p>出现这个问题，也许是因为您访问了不正确的链接地址，但更可能是由于我们对程序做出了更新，没有即时通知您所造成的。</p>',
 );
 
 

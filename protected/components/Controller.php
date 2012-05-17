@@ -5,8 +5,8 @@
  */
 class Controller extends CController
 {
-    public $adminTitle;
-    
+    public $channel;
+     
 	public function actions()
 	{
 		return array(
@@ -19,8 +19,7 @@ class Controller extends CController
 				'minLength' => 4,
 		        'foreColor' => 0xFF0000,
 		        'padding' => 3,
-		        'testLimit' => 1,
-// 			    'fixedVerifyCode' => '1231',
+		        'testLimit' => 3,
 			),
 		);
 	}

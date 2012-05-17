@@ -16,14 +16,14 @@
  */
 class User extends CActiveRecord
 {
-    const STATE_DISABLED = 0;
+    const STATE_UNVERIFY = 0;
     const STATE_ENABLED = 1;
     const STATE_FORBIDDEN = -1;
     
 
     public static function states()
     {
-        return array(self::STATE_ENABLED, self::STATE_DISABLED, self::STATE_FORBIDDEN);
+        return array(self::STATE_ENABLED, self::STATE_UNVERIFY, self::STATE_FORBIDDEN);
     }
     
 	/**
@@ -98,14 +98,19 @@ class User extends CActiveRecord
 		);
 	}
 	
-	public function getCreateTimeText($format = null)
+	public function getCreateTime($format = null)
 	{
 	    if  (null === $format)
 	        $format = param('formatShortDateTime');
 	
 	    return date($format, $this->create_time);
 	}
-	    
+
+	public function encryptPassword()
+	{
+	    $this->password = BetaBase::encryptPassword($this->password);
+	}
+	
 	protected function beforeSave()
 	{
 	    if ($this->getIsNewRecord()) {
@@ -116,9 +121,9 @@ class User extends CActiveRecord
 	    return true;
 	}
 	
-	public function encryptPassword()
+	public function beforeDelete()
 	{
-	    $this->password = BetaBase::encryptPassword($this->password);
+	    throw new CException(t('user_not_allow_delete'));
 	}
 
 }

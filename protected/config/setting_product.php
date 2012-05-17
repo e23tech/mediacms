@@ -55,15 +55,18 @@ return array(
     'formatDateTime' => 'Y-m-d H:i:s',
     'formatShortDateTime' => 'Y-m-d H:i',
     'formatDate' => 'Y-m-d',
+    'formatShortDate' => 'm-d',
     'formatTime' => 'H:i:s',
     'formatShortTime' => 'H:i',
     
     /*
      * 前台相关参数
      */
-    // 默认评论是否需要审核
+    // 默认评论是否需要审核, 1直接显示，0需要审核
     'defaultNewCommentState' => 1,
-    
+    // 默认发布的文章是否直接显示在首页
+    'defaultPostShowHomePage' => 1,
+    // 概述列表方式下概述内容最大长度
     'subSummaryLen' => 300,
     
     // 简述中可以使用的html标签

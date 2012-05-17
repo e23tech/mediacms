@@ -39,8 +39,11 @@ class PostController extends AdminController
 	    if (request()->getIsPostRequest() && isset($_POST['AdminPost'])) {
 	        $model->attributes = $_POST['AdminPost'];
 	        // 此处如果以后有多种文章模型了，这一句可以去掉。
-	        if ($model->getIsNewRecord())
+	        if ($model->getIsNewRecord()) {
+	            $model->user_id = user()->id;
+	            $model->user_name = user()->name;
     	        $model->post_type = AdminPost::TYPE_POST;
+	        }
 	        if ($model->save()) {
 	            $this->afterPostSave($model);
 	            user()->setFlash('save_post_result', t('save_post_success', 'admin', array('{title}'=>$model->title, '{url}'=>$model->url)));
@@ -190,11 +193,8 @@ class PostController extends AdminController
 	        throw new CHttpException(404, t('post_is_not_exist', 'admin'));
 	     
         $model->attributes = $_POST['AdminPost'];
-        // @todo 暂时没用，做快速发表时会用到
-        if ($model->getIsNewRecord())
-	        $model->post_type = AdminPost::TYPE_POST;
-        
-        $attributes = array('state', 'hottest', 'recommend', 'istop', 'homeshow', 'disable_comment');
+        $model = self::updatePostEditor($model);
+        $attributes = array('state', 'hottest', 'recommend', 'istop', 'homeshow', 'disable_comment', 'user_id', 'user_name');
         $result = (int)$model->save(true, $attributes);
         
         BetaBase::jsonp($callback, $result);
@@ -207,14 +207,15 @@ class PostController extends AdminController
 	    if ($model === null)
 	        throw new CHttpException(500);
 	    
-	    $model->state = abs($model->state - AdminPost::STATE_ENABLED);
+	    $model->state = ($model->state == AdminPost::STATE_NOT_VERIFY) ? AdminPost::STATE_ENABLED : AdminPost::STATE_NOT_VERIFY;
 	    if ($model->state == AdminPost::STATE_ENABLED) {
 	        $model->create_time = $_SERVER['REQUEST_TIME'];
-	        $attributes = array('state', 'create_time');
+	        $attributes = array('user_id', 'user_name', 'state', 'create_time');
 	    }
 	    else
 	        $attributes = array('state');
 	    
+	    $model = self::updatePostEditor($model);
         $model->save(true, $attributes);
 	    if ($model->hasErrors())
 	        throw new CHttpException(500);
@@ -328,12 +329,15 @@ class PostController extends AdminController
 	    $ids = (array)request()->getPost('ids');
 	     
 	    $successIds = $failedIds = array();
-	    $attributes = array(
-	        'state' => AdminPost::STATE_ENABLED,
-	        'create_time' => $_SERVER['REQUEST_TIME'],
-	    );
+	    $attributes = array('user_id', 'user_name', 'state', 'create_time');
 	    foreach ($ids as $id) {
-	        $result = AdminPost::model()->updateByPk($id, $attributes);
+	        $model = AdminPost::model()->findByPk($id);
+	        if ($model === null) continue;
+	        
+	        $model->state = AdminPost::STATE_ENABLED;
+	        $model->create_time = $_SERVER['REQUEST_TIME'];
+	        $model = self::updatePostEditor($model);
+	        $result = $model->save(true, $attributes);
 	        if ($result)
 	            $successIds[] = $id;
 	        else
@@ -432,5 +436,14 @@ class PostController extends AdminController
 	    BetaBase::jsonp($callback, $data);
 	}
 
+	private static function updatePostEditor(AdminPost $model)
+	{
+	    if (empty($model->user_id) && $model->state == AdminPost::STATE_ENABLED) {
+	        $model->user_id = user()->id;
+	        $model->user_name = user()->name;
+	    }
+	    
+	    return $model;
+	}
 	
 }

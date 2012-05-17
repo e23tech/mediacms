@@ -34,7 +34,7 @@
  * @property string $contributor_site
  * @property string $contributor_email
  * @property string $filterContent
- * @property string $crateTime
+ * @property string $createTime
  * @property string $authorName
  * @property string $contributorName
  * @property string $contributorLink
@@ -75,7 +75,7 @@ class Post extends CActiveRecord
     
     public static function states()
     {
-        return array(self::STATE_ENABLED, self::STATE_DISABLED, self::STATE_REJECTED, self::STATE_NOT_VERIFY);
+        return array(self::STATE_ENABLED, self::STATE_DISABLED, self::STATE_REJECTED, self::STATE_NOT_VERIFY, self::STATE_TRASH);
     }
     
     public static function types()
@@ -176,7 +176,7 @@ class Post extends CActiveRecord
 			'comment_nums' => t('comment_nums'),
 			'digg_nums' => t('digg_nums'),
 			'visit_nums' => t('visit_nums'),
-			'user_id' => t('user'),
+			'user_id' => t('user_id'),
 			'user_name' => t('user_name'),
 	        'source' => t('source'),
 			'tags' => t('tags'),
@@ -185,6 +185,7 @@ class Post extends CActiveRecord
 		    'disable_comment' => t('disable_comment'),
 	        'recommend' => t('recommend'),
 	        'hottest' => t('hottest'),
+	        'homeshow' => t('homeshow'),
 			'thumbnail' => t('thumbnail'),
 			'summary' => t('summary'),
 			'content' => t('content'),
@@ -209,15 +210,15 @@ class Post extends CActiveRecord
             ),
             'hottest' => array(
                 'condition' => 't.hottest = ' . BETA_YES,
-                'order' => 't.id desc',
+                'order' => 't.create_time desc',
             ),
             'recommend' => array(
                 'condition' => 't.recommend = ' . BETA_YES,
-                'order' => 't.id desc',
+                'order' => 't.create_time desc',
             ),
             'recently' => array(
                 'condition' => 't.state = ' . self::STATE_ENABLED,
-                'order' => 't.id desc',
+                'order' => 't.create_time desc',
                 'limit' => 10,
             ),
 	    );
@@ -235,6 +236,13 @@ class Post extends CActiveRecord
 	        $format = param('formatShortDateTime');
 	
 	    return date($format, $this->create_time);
+	}
+	
+	public function getShortDate()
+	{
+	    $format = param('formatShortDate');
+	    
+	    return $this->getCreateTime($format);
 	}
 	
 	public function getAuthorName()
@@ -390,7 +398,7 @@ class Post extends CActiveRecord
 	        return '';
 	}
 	
-	public function getTopicLink()
+	public function getTopicLink($target = '_blank')
 	{
 	    if ($this->topic)
 	        return $this->topic->getPostsLink($target);
@@ -403,6 +411,17 @@ class Post extends CActiveRecord
 	    return t('post_show_extra', 'main', array('{author}'=>$this->authorName, '{time}'=>$this->createTime, '{visit}'=>$this->visit_nums, '{digg}'=>$this->digg_nums));
 	}
 
+	public function trash()
+	{
+	    if ($this->getIsNewRecord())
+	        throw new CException('this is a new record');
+	    else {
+    	    $this->state = self::STATE_TRASH;
+    	    $result = $this->save(true, array('state'));
+    	    return $result;
+	    }
+	}
+	
 	protected function beforeSave()
 	{
 	    if ($this->getIsNewRecord()) {
@@ -411,7 +430,6 @@ class Post extends CActiveRecord
 	        $this->create_ip = request()->getUserHostAddress();
 	        $this->source = strip_tags(trim($this->source));
 	    }
-	    $this->state = $this->state ? self::STATE_ENABLED : self::STATE_DISABLED;
 	    if ($this->tags) {
     	    $tags = join(',', Tag::filterTagsArray($this->tags));
     	    $this->tags = $tags;
@@ -421,11 +439,10 @@ class Post extends CActiveRecord
 	
 	protected function afterSave()
 	{
-	    $counters = array('post_nums' => 1);
-	    Category::model()->updateCounters($counters, 'id = :cid', array(':cid'=>$this->category_id));
-	    Topic::model()->updateCounters($counters, 'id = :tid', array(':tid'=>$this->topic_id));
-        
 	    if ($this->getIsNewRecord()) {
+	        $counters = array('post_nums' => 1);
+	        Category::model()->updateCounters($counters, 'id = :cid', array(':cid'=>$this->category_id));
+	        Topic::model()->updateCounters($counters, 'id = :tid', array(':tid'=>$this->topic_id));
 	        Tag::savePostTags($this->id, $this->tags);
 	    }
 	}
@@ -442,7 +459,6 @@ class Post extends CActiveRecord
 	    app()->db->createCommand()->delete('{{post2tag}}', 'post_id = :pid', array(':pid'=>$this->id));
 	    app()->db->createCommand()->delete('{{special2post}}', 'post_id = :pid', array(':pid'=>$this->id));
 	     
-	    // @todo 此处删除文章后对应的图片也应该删除
 	    $files = Upload::model()->findAllByAttributes(array('post_id'=>$this->id));
 	    foreach ($files as $file) $file->delete();
 	}
@@ -456,6 +472,7 @@ class Post extends CActiveRecord
 	    else
 	        $this->summary = strip_tags($this->summary, param('summaryHtmlTags'));
 	}
+
 }
 
 

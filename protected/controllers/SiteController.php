@@ -117,11 +117,6 @@ class SiteController extends Controller
         $this->redirect(app()->homeUrl);
     }
     
-    public function actionError()
-    {
-        $error = app()->errorHandler;
-    }
-    
     private static function fetchLatestPosts()
     {
         $criteria = new CDbCriteria();
@@ -195,6 +190,32 @@ class SiteController extends Controller
         $auth->assign('admin','1');
         
 
+    }
+
+
+    public function actionError()
+    {
+        $error = app()->errorHandler->error;;
+        if ($error) {
+            $this->setPageTitle('Error ' . $error['code']);
+            $this->render('/system/error', $error);
+        }
+    }
+
+    public function actionPing()
+    {
+        $result = BetaBase::ping('贝塔资讯', 'http://www.waduanzi.com/', 'http://www.24beta.com/archives/406', 'http://www.24beta.com/');
+        print_r($result);
+        
+        exit;
+        $client = new SoapClient(BAIDU_PING_URL);
+        $functions = $client->__getFunctions();
+        var_dump($functions);
+        exit;
+        
+        $arguments = array('贝塔IT资讯', 'http://www.24beta.com', 'http://www.24beta.com/archives/406', 'http://www.24beta.com');
+        $result = $client->__soapCall('weblogUpdates.extendedPing', $arguments);
+        var_dump($result);
     }
 }
 

@@ -3,6 +3,8 @@ class TopicController extends Controller
 {
     public function actionPosts($id)
     {
+        $this->channel = 'topic';
+        
         $id = (int)$id;
         $topic = Topic::model()->findByPk($id);
         if ($topic === null)
@@ -12,17 +14,21 @@ class TopicController extends Controller
         $data['topic'] = $topic;
         
         $this->setSiteTitle(t('topic_posts', 'main', array('{name}'=>$topic->name)));
-        // @todo 关键字的描述没有指定
-        $this->setPageKeyWords(null);
-        $this->setPageDescription(null);
+        $this->setPageKeyWords($topic->name);
+        $this->setPageDescription(t('topic_posts_page_description', 'main', array('{name}' => $topic->name)));
         
         cs()->registerMetaTag('all', 'robots');
+        
+        $feedTitle = $topic->name . t('topic_feed');
+        cs()->registerLinkTag('alternate', 'application/rss+xml', aurl('feed/topic', array('id'=>$id)), null, array('title'=>$feedTitle));
+        
         $this->render('posts', $data);
     }
     
     private static function fetchTopicPosts($id)
     {
         $criteria = new CDbCriteria();
+        $criteria->select = array('t.id', 't.title', 't.visit_nums', 't.comment_nums', 't.create_time');
         $criteria->order = 't.istop desc, t.create_time desc';
         $criteria->addColumnCondition(array('t.topic_id' => $id))
             ->addCondition('t.state = :state');
@@ -42,6 +48,8 @@ class TopicController extends Controller
 
     public function actionList()
     {
+        $this->channel = 'topic';
+        
         $criteria = new CDbCriteria();
         $criteria->order = 'orderid desc, post_nums desc, id asc';
         $topics = Topic::model()->findAll($criteria);

@@ -1,9 +1,15 @@
 <?php
 class BetaBase
 {
+    const VERSION = '1.0';
+    
     const FILE_NO_EXIST = -1; // '目录不存在并且无法创建';
     const FILE_NO_WRITABLE = -2; // '目录不可写';
     
+    public static function powered()
+    {
+        return '24blog ' . self::VERSION;
+    }
     
     /**
      * 获取客户端IP地址
@@ -157,5 +163,24 @@ class BetaBase
         }
         
         return $newText;
+    }
+
+    public static function ping($sitename, $siteurl, $page, $rss = '')
+    {
+        $pingXml= '<?xml version="1.0" encoding="UTF-8"?>';
+        $pingXml.= '<methodCall><methodName>weblogUpdates.extendedPing</methodName>';
+        $pingXml.= '<params><param><value><string>%s</string></value></param><param>';
+        $pingXml.= '<value><string>%s</string></value></param>';
+        $pingXml.= '<param><value><string>%s</string></value></param>';
+        $pingXml.= '<param><value><string>%s</string></value></param></params>';
+        $pingXml.= '</methodCall>';
+        $pingXml = sprintf($pingXml, $sitename, $siteurl, $page, $rss);
+        
+        $curl = new CdCurl();
+        $curl->headers(array('content-type:text/xml'));
+        $curl->post(BAIDU_PING_URL, $pingXml);
+        $data = $curl->rawdata();
+        $result = simplexml_load_string($data);
+        return !(bool)(int)$result;
     }
 }

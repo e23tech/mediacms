@@ -62,6 +62,9 @@ return array(
                 ), */
             ),
         ),
+        'errorHandler' => array(
+            'errorAction' => 'site/error',
+        ),
         'user' => array(
             'allowAutoLogin' => true,
             'loginUrl' => array('site/login'),
@@ -105,9 +108,9 @@ return array(
         ),
         'authManager' => array(
             'class' => 'CDbAuthManager',
-            'assignmentTable' => $dbconfig['tablePrefix'] . 'auth_assignment',
-            'itemChildTable' => $dbconfig['tablePrefix'] . 'auth_itemchild',
-            'itemTable' => $dbconfig['tablePrefix'] . 'auth_item',
+            'assignmentTable' => '{{auth_assignment}}',
+            'itemChildTable' => '{{auth_itemchild}}',
+            'itemTable' => '{{auth_item}}',
         ),
         'urlManager' => array(
             'urlFormat' => 'path',
@@ -116,12 +119,14 @@ return array(
             'rules' => array(
                 'page/<page:\d+>' => 'site/index',
                 '' => 'site/index',
-                '<id:\d+>' => 'post/show',
+                'archives/<id:\d+>' => 'post/show',
                 '<_a:(login|signup|logout)>' => 'site/<_a>',
-                '<_c:(category|topic)>/<id:\d+>-page-<page:\d+>' => '<_c>/posts',
+                '<_c:(category|topic)>/<id:\d+>/page/<page:\d+>' => '<_c>/posts',
                 '<_c:(category|topic)>/<id:\d+>' => '<_c>/posts',
                 'topics' => 'topic/list',
-                'tag/<name:[\w\d\s\%]+>' => 'tag/posts',
+                'tag/<name:[\w\s\%\-\+]+>' => 'tag/posts',
+                'feed/category/<id:\d+>' => 'feed/category',
+                'feed/topic/<id:\d+>' => 'feed/topic',
             ),
         ),
     ),

@@ -128,19 +128,19 @@ pre code{padding:0;background-color:transparent;}
 .beta-header .beta-logo a {display:block; width:250px; height:100%; text-indent:-99999px;}
 
 /* header nav */
-.beta-nav {background:#EFEFEF; margin-bottom:10px; padding:0 20px; border-bottom:1px solid #DFDFDF;}
+.beta-nav {background:#EFEFEF; margin-bottom:15px; border-bottom:1px solid #DFDFDF;}
 .beta-nav ul, .beta-nav li {margin:0; list-style:none inside;}
 .beta-nav li {float:left;}
-.beta-nav li a {display:block; padding:8px 3px 6px; margin-right:10px;}
-.beta-nav a:link, .beta-nav a:hover, .beta-nav a:visited {text-decoration:none; colodr:#4F4F4F; text-shadow:1px 1px white;}
-.beta-nav a:hover {color:#5F5F5F;}
+.beta-nav li a {display:block; padding:3px 10px 2px; margin:5px;}
+.beta-nav a:link, .beta-nav a:visited {text-decoration:none; color:#4F4F4F;}
+.beta-nav a:hover, .beta-nav a.active:link, .beta-nav a.active:visited {text-decoration:none; color:white; background:#C70003;}
 .beta-nav .user-mini-bar li a {margin-right:0; maring-left:4px;}
 
 /* post summary list */
 .beta-post-item {border:1px solid #BFBFBF; margin:0 0 10px;}
 .beta-post-item dt, .beta-post-item dd {padding:0 10px; margin:0;}
-.beta-post-item h1 {font-size:18px; font-family:微软雅黑; line-height:22px;}
-.beta-post-item h1 strong {color:darkred;}
+.beta-post-item dt {font-size:16px; font-family:微软雅黑; line-height:22px; margin:12px 0;}
+.beta-post-item dt strong {color:darkred;}
 .beta-post-item .beta-post-summary {margin:10px 0px; overflow:hidden; line-height:24px;}
 .beta-post-item .beta-post-toolbar {font-size:12px; line-height:24px; height:24px; padding:0 10px; background:#CFCFCF; border-top:1px solid #cccccc;}
 .beta-post-item .beta-post-toolbar a {margin-right:10px;}
@@ -182,6 +182,8 @@ pre code{padding:0;background-color:transparent;}
 .beta-post-detail .beta-post-tags a, .beta-post-detail .beta-post-source a {margin-left:5px; font-size:12px!important;}
 .beta-post-detail .beta-post-source a {line-height:16px;}
 .beta-mini-title {font-size:12px; background:#CFCFCF; text-indent:10px; height:24px; line-height:24px; font-weight:bold;}
+.beta-post-detail table {border-spacing:0; border-collapse:collapse; border:0; margin:10px 0;}
+.beta-post-detail table th, .beta-post-detail table td {border:1px solid #CFCFCF; padding:5px;}
 
 /* comment list */
 .beta-comment-item {font-size:12px; border-bottom:1px solid #CFCFCF; margin:0;}
@@ -255,7 +257,7 @@ body.beta-ke-content {padding:5px;}
 .beta-pages ul.yiiPager .first,.beta-pages ul.yiiPager .last{display:none;}
 
 /* beta-hottest-posts */
-.beta-hottest-posts {margin:15px auto;}
+.beta-hottest-posts {margin:0 auto 15px;}
 .beta-hottest-posts a {display:block; position:relative; float:left; width:222px; height:130px; overflow:hidden;}
 .beta-hottest-posts a:link, .beta-hottest-posts a:hover, .beta-hottest-posts a:visited {text-decoration:none;}
 .beta-hottest-posts a:last-child {margin-right:0;}
@@ -303,7 +305,9 @@ body.beta-ke-content {padding:5px;}
 /* topic/posts */
 .beta-post-title-item li {margin:10px;}
 
-
-
+/* error page */
+.beta-error {color:gray;}
+.beta-error .error-icon {font-size:200px; color:#BFBFBF; margin-right:20px; line-height:300px; font-weight:bold;}
+.beta-error .error-detail {padding-top:40px; line-height:24px;}
 
 

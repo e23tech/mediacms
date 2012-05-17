@@ -9,7 +9,7 @@ class CdCurl
     private $_data;
     private $_timeout = 30;
     private $_connection_timeout = 60;
-    private static $user_agent = 'Mozilla/5.0 (Windows NT 6.1; rv:2.0) Gecko/20100101 Firefox/4.0';
+    private $user_agent = 'Mozilla/5.0 (Windows NT 6.1; rv:2.0) Gecko/20100101 Firefox/4.0';
 
     public function __construct()
     {
@@ -21,7 +21,7 @@ class CdCurl
     
     private function _option_init()
     {
-        $this->add_option(CURLOPT_USERAGENT, self::$user_agent);
+        $this->add_option(CURLOPT_USERAGENT, $this->user_agent);
         $this->add_option(CURLOPT_CONNECTTIMEOUT, $this->_connection_timeout);
         $this->add_option(CURLOPT_TIMEOUT, $this->_timeout);
         $this->add_option(CURLOPT_RETURNTRANSFER, true);
@@ -87,7 +87,6 @@ class CdCurl
          return $this;
      }
     
-    
     public final function referer($url = true)
     {
         if (is_string($url) && !empty($url)) {
@@ -97,6 +96,21 @@ class CdCurl
         elseif (is_bool($url))
             $this->add_option(CURLOPT_AUTOREFERER, $url);
         
+        return $this;
+    }
+    
+    public function user_agent($agent)
+    {
+        if ($agent)
+            $this->user_agent = $agent;
+    }
+    
+    public function headers($headers)
+    {
+        if (!empty($headers)) {
+            $headers = (array)$headers;
+            $this->add_option(CURLOPT_HTTPHEADER, $headers);
+        }
         return $this;
     }
     
@@ -135,7 +149,7 @@ class CdCurl
     
     public final function post($url, $data = null)
     {
-        $this->add_option(CURLOPT_POST, 'POST');
+        $this->add_option(CURLOPT_POST, true);
         if (null !== $data)
             $this->add_option(CURLOPT_POSTFIELDS, $data);
         return $this->exec($url);
@@ -195,7 +209,6 @@ class CdCurl
         $this->add_option(CURLOPT_FOLLOWLOCATION, $val);
         return $this;
     }
-
     
     public final function get_ch()
     {
@@ -203,3 +216,4 @@ class CdCurl
     }
     
 }
+
