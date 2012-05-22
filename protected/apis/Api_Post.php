@@ -209,8 +209,6 @@ class Api_Post extends ApiBase
             
         if ($model->save()) {
             $result = $this->afterCreate($model);
-            $filename = app()->getRuntimePath() . DS . 'debug.log';
-            file_put_contents($filename, print_r($result, true));
             $data = array(
                 'error' => 'OK',
                 'fileError' => $result,
@@ -232,12 +230,18 @@ class Api_Post extends ApiBase
     
     private function afterCreate(Post $model)
     {
-        $errorCount = 0;
-        foreach ($_FILES as $key => $file) {
-            $upload = CUploadedFile::getInstanceByName($key);
-            $result = $this->uploadFile($model->id, $upload, Upload::TYPE_PICTURE, 'images');
-            if (!$result)
-                $errorCount++;
+        try {
+            $errorCount = 0;
+            foreach ($_FILES as $key => $file) {
+                $upload = CUploadedFile::getInstanceByName($key);
+                $result = $this->uploadFile($model->id, $upload, Upload::TYPE_PICTURE, 'images');
+                if (!$result)
+                    $errorCount++;
+            }
+        }
+        catch (Exception $e) {
+            $filename = app()->getRuntimePath() . DS . 'debug.log';
+            file_put_contents($filename, print_r($e->getMessage(), true));
         }
         
         return $errorCount;
