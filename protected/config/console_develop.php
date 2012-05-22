@@ -1,6 +1,6 @@
 <?php
 defined('DS') or define('DS', DIRECTORY_SEPARATOR);
-$params = require(dirname(__FILE__) . DS . 'params_develop.php');
+$params = require(dirname(__FILE__) . DS . 'setting_develop.php');
 
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
@@ -37,6 +37,18 @@ return array(
             'enableParamLogging' => true,
             'enableProfiling' => true,
         ),
+		'newsdb' => array(
+            'class' => 'CDbConnection',
+			'connectionString' => 'mysql:host=218.57.134.79; port=3306; dbname=cms_e23',
+			'username' => 'search',
+		    'password' => 'searche23',
+		    'charset' => 'utf8',
+		    'persistent' => true,
+		    'tablePrefix' => 'cd_',
+            'enableParamLogging' => true,
+            'enableProfiling' => true,
+        ),
+	
         'cache' => array(
             'class' => 'CFileCache',
 		    'directoryLevel' => 2,

@@ -1,6 +1,6 @@
 <?php
 defined('DS') or define('DS', DIRECTORY_SEPARATOR);
-$params = require(dirname(__FILE__) . DS . 'params_product.php');
+$params = require(dirname(__FILE__) . DS . 'setting_product.php');
 
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
