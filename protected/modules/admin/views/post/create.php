@@ -94,7 +94,7 @@
         </div>
     </div>
     <?php endif;?>
-    <!-- 此处是文章图片，以后代替为弹出层的相册界面
+    <!-- 此处是文章图片，以后代替为弹出层的相册界面 -->
     <?php if (count($model->picture) > 0):?>
     <div class="control-group bottom10px">
         <label class="control-label"><?php echo t('post_upload_pictures', 'admin');?></label>
@@ -107,7 +107,6 @@
         </div>
     </div>
     <?php endif;?>
-     -->
     <div class="form-actions">
         <?php echo CHtml::submitButton(t('submit_post', 'admin'), array('class'=>'btn btn-primary'));?>
     </div>

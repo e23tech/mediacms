@@ -9,12 +9,6 @@ class PostController extends Controller
         );
     }
     
-    // @todo 临时动作
-    public function actionGoto($id)
-    {
-        $this->redirect(url('post/show', array('id'=>$id)));
-    }
-    
     public function actionShow($id)
     {
         $id = (int)$id;
