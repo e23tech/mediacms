@@ -42,7 +42,7 @@ class ApiBase
         
         $errno = false;
         if (request()->getIsPostRequest())
-            $method = 'getPost';
+            $method = 'getAppParam';
         elseif (request()->getIsPutRequest())
             $method = 'getPut';
         elseif (request()->getIsDeleteRequest())
