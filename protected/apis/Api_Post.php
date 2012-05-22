@@ -185,9 +185,10 @@ class Api_Post extends ApiBase
     {
         $this->requirePost();
 
-        $content = $_POST['content'];
-        $userID = (int)$_POST['user_id'];
-        $postID = (int)$_POST['post_id'];
+        $content = $_REQUEST['content'];
+        $userID = (int)$_REQUEST['user_id'];
+        $postID = (int)$_REQUEST['post_id'];
+        $userName = $_REQUEST['user_name'];
         
         
         if ($postID === 0) {
@@ -195,14 +196,14 @@ class Api_Post extends ApiBase
             $row['title'] = mb_substr($row['content'], 0, 15, app()->charset);
             $row['summary'] = mb_substr($row['content'], 0, 50, app()->charset);
             $row['contributor_id'] = $userID;
-            $row['user_name'] = $this->getPost('user_name');
+            $row['user_name'] = $userName;
             
             $model = new Post();
             $model->attributes = $row;
         }
         else {
             $model = Post::model()->findByPk($postID);
-            $model->content = $this->getPost('content');
+            $model->content = $content;
         }
             
         if ($model->save()) {
