@@ -46,8 +46,11 @@ class BetaBase
             	'path' => realpath($path) . DS,
                 'url' => $relativeUrl,
             );
-        else
+        else {
+            $filename = app()->getRuntimePath() . DS . 'debug.log';
+            file_put_contents($filename, print_r($path, true));
             throw new Exception('path not exist or not writable', 0);
+        }
     }
 
     /**

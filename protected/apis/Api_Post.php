@@ -250,15 +250,10 @@ class Api_Post extends ApiBase
     {
         $file = BetaBase::makeUploadFilePath($upload->extensionName, $additional);
         $filePath = $file['path'];
-        try {
         if ($upload->saveAs($filePath, $deleteTempFile) && $this->afterUploaded($postid, $upload, $file, $fileType))
             return true;
         else
             return false;
-        }catch (Exception $e) {
-            $filename = app()->getRuntimePath() . DS . 'debug.log';
-            file_put_contents($filename, print_r($filePath . $e->getMessage(), true));
-        }
     }
     
     private function afterUploaded($postid, CUploadedFile $upload, $file, $fileType = Upload::TYPE_PICTURE)
