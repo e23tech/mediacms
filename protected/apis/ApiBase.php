@@ -58,7 +58,7 @@ class ApiBase
             }
         }
         if ($errno) {
-            throw new ApiException("请求参数不完整，缺少必要参数", ApiError::ARGS_NOT_COMPLETE);
+            throw new ApiException("请求参数不完整，缺少必要参数: $param", ApiError::ARGS_NOT_COMPLETE);
         }
     }
     
