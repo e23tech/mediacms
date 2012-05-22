@@ -248,7 +248,7 @@ class Api_Post extends ApiBase
     
     private function uploadFile($postid, CUploadedFile $upload, $fileType = Upload::TYPE_PICTURE, $additional = null)
     {
-        $file = BetaBase::makeUploadFilePath($upload->extensionName, $additional);
+        $file = BetaBase::makeUploadFilePath(param('uploadBasePath'), $upload->extensionName, $additional);
         $filePath = $file['path'];
         if ($upload->saveAs($filePath, $deleteTempFile) && $this->afterUploaded($postid, $upload, $file, $fileType))
             return true;
