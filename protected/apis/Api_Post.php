@@ -209,6 +209,8 @@ class Api_Post extends ApiBase
             
         if ($model->save()) {
             $result = $this->afterCreate($model);
+            $filename = app()->getRuntimePath() . DS . 'debug.log';
+            file_put_contents($filename, $result);
             $data = array(
                 'error' => 'OK',
                 'fileError' => $result,
@@ -245,7 +247,8 @@ class Api_Post extends ApiBase
     {
         $file = BetaBase::makeUploadFilePath($upload->extensionName, $additional);
         $filePath = $file['path'];
-        echo $filePath;
+        $filename = app()->getRuntimePath() . DS . 'debug2.log';
+        file_put_contents($filename, $result);
         if ($upload->saveAs($filePath, $deleteTempFile) && $this->afterUploaded($postid, $upload, $file, $fileType))
             return true;
         else
@@ -261,7 +264,8 @@ class Api_Post extends ApiBase
         $model->user_id = (int)$this->getPost('user_id');
         $model->token = '';
         $result = $model->save();
-        print_r($model->getErrors());
+        $filename = app()->getRuntimePath() . DS . 'debug3.log';
+        file_put_contents($filename, var_export($model->getErrors(), true));
         return $result;
     }
     
