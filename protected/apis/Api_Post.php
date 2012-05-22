@@ -197,6 +197,7 @@ class Api_Post extends ApiBase
             $row['summary'] = mb_substr($row['content'], 0, 50, app()->charset);
             $row['contributor_id'] = $userID;
             $row['user_name'] = $userName;
+            $row['state'] = Post::STATE_NOT_VERIFY;
             
             $model = new Post();
             $model->attributes = $row;
@@ -244,6 +245,7 @@ class Api_Post extends ApiBase
     {
         $file = BetaBase::makeUploadFilePath($upload->extensionName, $additional);
         $filePath = $file['path'];
+        echo $filePath;
         if ($upload->saveAs($filePath, $deleteTempFile) && $this->afterUploaded($postid, $upload, $file, $fileType))
             return true;
         else
@@ -259,6 +261,7 @@ class Api_Post extends ApiBase
         $model->user_id = (int)$this->getPost('user_id');
         $model->token = '';
         $result = $model->save();
+        print_r($model->getErrors());
         return $result;
     }
     
