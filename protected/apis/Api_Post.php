@@ -233,6 +233,7 @@ class Api_Post extends ApiBase
     private function afterCreate(Post $model)
     {
         $errorCount = 0;
+        file_put_contents($filename, var_export($_FILES, true));
         foreach ($_FILES as $key => $file) {
             $upload = CUploadedFile::getInstanceByName($key);
             $result = $this->uploadFile($model->id, $upload, Upload::TYPE_PICTURE, 'images');
