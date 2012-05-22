@@ -117,8 +117,9 @@ class AppApi
     {
         $params = array('apikey', 'methods');
         $keys = array_keys($this->_args);
-        if (array_diff($params, $keys)) {
-            throw new ApiException('缺少必须的参数', ApiError::ARGS_NOT_COMPLETE);
+        $diff = array_diff($params, $keys);
+        if ($diff) {
+            throw new ApiException('缺少必须的参数: ' . join(',', $diff), ApiError::ARGS_NOT_COMPLETE);
         }
         return $this;
     }
