@@ -208,9 +208,9 @@ class Api_Post extends ApiBase
         }
             
         if ($model->save()) {
-            $filename = app()->getRuntimePath() . DS . 'debug.log';
-            file_put_contents($filename, print_r($_FILES, true));
             $result = $this->afterCreate($model);
+            $filename = app()->getRuntimePath() . DS . 'debug.log';
+            file_put_contents($filename, print_r($result, true));
             $data = array(
                 'error' => 'OK',
                 'fileError' => $result,
