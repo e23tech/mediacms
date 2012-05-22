@@ -175,7 +175,7 @@ class PostController extends AdminController
 	public function actionTrash()
 	{
 	    $criteria = new CDbCriteria();
-	    $criteria->addColumnCondition(array('state'=>AdminPost::STATE_TRASH));
+	    $criteria->addColumnCondition(array('t.state'=>AdminPost::STATE_TRASH));
 	    $data = AdminPost::fetchList($criteria);
 	     
 	    $this->render('list', $data);
