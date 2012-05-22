@@ -240,8 +240,7 @@ class Api_Post extends ApiBase
             }
         }
         catch (Exception $e) {
-            $filename = app()->getRuntimePath() . DS . 'debug.log';
-            file_put_contents($filename, print_r($e->getMessage(), true));
+            return $e->getMessage();
         }
         
         return $errorCount;
@@ -251,6 +250,8 @@ class Api_Post extends ApiBase
     {
         $file = BetaBase::makeUploadFilePath($upload->extensionName, $additional);
         $filePath = $file['path'];
+        $filename = app()->getRuntimePath() . DS . 'debug.log';
+        file_put_contents($filename, print_r($filePath, true));
         if ($upload->saveAs($filePath, $deleteTempFile) && $this->afterUploaded($postid, $upload, $file, $fileType))
             return true;
         else
