@@ -191,7 +191,7 @@ class Api_Post extends ApiBase
         
         
         if ($postID === 0) {
-            $row['content'] = $this->getPost('content');
+            $row['content'] = $_POST['content'];
             $row['title'] = mb_substr($row['content'], 0, 15, app()->charset);
             $row['summary'] = mb_substr($row['content'], 0, 50, app()->charset);
             $row['contributor_id'] = $userID;
