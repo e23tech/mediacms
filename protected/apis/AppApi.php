@@ -115,9 +115,9 @@ class AppApi
      */
     private function checkRequiredArgs()
     {
-        $args = array('apikey', 'methods');
+        $params = array('apikey', 'methods');
         $keys = array_keys($this->_args);
-        if ($keys != ($keys + $args)) {
+        if (array_diff($params, $keys)) {
             throw new ApiException('缺少必须的参数', ApiError::ARGS_NOT_COMPLETE);
         }
         return $this;
