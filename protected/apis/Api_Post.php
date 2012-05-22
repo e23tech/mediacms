@@ -184,23 +184,24 @@ class Api_Post extends ApiBase
     public function create()
     {
         $this->requirePost();
-        $this->requiredParams(array('content', 'user_id'));
 
-        $post_id = (int)$this->getPost('post_id');
+        $content = $_POST['content'];
+        $userID = (int)$_POST['user_id'];
+        $postID = (int)$_POST['post_id'];
         
         
-        if ($post_id === 0) {
+        if ($postID === 0) {
             $row['content'] = $this->getPost('content');
             $row['title'] = mb_substr($row['content'], 0, 15, app()->charset);
             $row['summary'] = mb_substr($row['content'], 0, 50, app()->charset);
-            $row['contributor_id'] = (int)$this->getPost('user_id');
+            $row['contributor_id'] = $userID;
             $row['user_name'] = $this->getPost('user_name');
             
             $model = new Post();
             $model->attributes = $row;
         }
         else {
-            $model = Post::model()->findByPk($post_id);
+            $model = Post::model()->findByPk($postID);
             $model->content = $this->getPost('content');
         }
             
