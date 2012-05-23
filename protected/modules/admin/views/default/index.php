@@ -11,7 +11,7 @@
 <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container admin-nav-container">
-            <a class="brand" href="<?php echo url('admin/default/welcome');?>" target="main">24Beta<?php echo t('control_center', 'admin');?></a>
+            <a class="brand" href="<?php echo url('admin/default/welcome');?>" target="main"><?php echo t('control_center', 'admin');?></a>
             <ul class="nav">
                 <li class="divider-vertical"></li>
                 <li class="dropdown">
@@ -37,19 +37,19 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo t('topic_category', 'admin');?><b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li class="nav-header"><?php echo t('post_topic', 'admin');?></li>
+                        <!-- <li class="nav-header"><?php echo t('post_topic', 'admin');?></li>
                         <li><?php echo l(t('create_topic', 'admin'), url('admin/topic/create'), array('target'=>'main'));?></li>
                         <li><?php echo l(t('topic_list_table', 'admin'), url('admin/topic/list'), array('target'=>'main'));?></li>
-                        <!-- <li><?php echo l(t('topic_statistics', 'admin'), url('admin/topic/statistics'), array('target'=>'main'));?></li> -->
-                        <li class="divider"></li>
-                        <li class="nav-header"><?php echo t('post_special', 'admin');?></li>
-                        <li><?php echo l(t('create_special', 'admin'), url('admin/special/create'), array('target'=>'main'));?></li>
-                        <li><?php echo l(t('special_list_table', 'admin'), url('admin/special/list'), array('target'=>'main'));?></li>
-                        <li class="divider"></li>
+                        <li><?php echo l(t('topic_statistics', 'admin'), url('admin/topic/statistics'), array('target'=>'main'));?></li>
+                        <li class="divider"></li> -->
                         <li class="nav-header"><?php echo t('post_category', 'admin');?></li>
                         <li><?php echo l(t('create_category', 'admin'), url('admin/category/create'), array('target'=>'main'));?></li>
                         <li><?php echo l(t('category_list_table', 'admin'), url('admin/category/list'), array('target'=>'main'));?></li>
                         <!-- <li><?php echo l(t('category_statistics', 'admin'), url('admin/category/statistics'), array('target'=>'main'));?></li> -->
+                        <li class="divider"></li>
+                        <li class="nav-header"><?php echo t('post_special', 'admin');?></li>
+                        <li><?php echo l(t('create_special', 'admin'), url('admin/special/create'), array('target'=>'main'));?></li>
+                        <li><?php echo l(t('special_list_table', 'admin'), url('admin/special/list'), array('target'=>'main'));?></li>
                     </ul>
                 </li>
                 <li class="dropdown">

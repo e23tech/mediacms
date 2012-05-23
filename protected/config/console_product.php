@@ -4,8 +4,8 @@ $params = require(dirname(__FILE__) . DS . 'setting_product.php');
 
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-    'id' => 'waduanzi.com',
-	'name'=>'Daily Jokes',
+    'id' => $params['domain'],
+	'name'=> $params['sitename'],
     'language' => 'zh_cn',
     'charset' => 'utf-8',
     'timezone' => 'Asia/Shanghai',
