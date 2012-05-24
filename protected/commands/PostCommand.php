@@ -1,7 +1,7 @@
 <?php
 class PostCommand extends CConsoleCommand
 {
-    const SYNC_ONCE_COUNT = 50;
+    const SYNC_ONCE_COUNT = 100;
     const SYNC_LASTID_CACHE_ID = 'sync_news_lastid';
     
     public function actionSyncNews($count = 50, $initLastid = 0)

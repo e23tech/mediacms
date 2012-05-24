@@ -34,7 +34,7 @@ return array(
         ),
 		'newsdb' => array(
             'class' => 'CDbConnection',
-			'connectionString' => 'mysql:host=218.57.134.79; port=3306; dbname=cms_e23',
+			'connectionString' => 'mysql:host=192.168.10.2; port=3306; dbname=cms_e23',
 			'username' => 'search',
 		    'password' => 'searche23',
 		    'charset' => 'utf8',
