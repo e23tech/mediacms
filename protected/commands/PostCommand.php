@@ -22,11 +22,13 @@ class PostCommand extends CConsoleCommand
     
     private static function fetchNewsRows($count, $lastid)
     {
+        $validStatus = 99;
+        
         $cmd = app()->newsdb->createCommand()
             ->select(array('n.id', 'n.title', 'n.thumb', 'n.description', 'n.inputtime', 'd.content'))
             ->from('{{jnnews}} n')
             ->join('{{jnnews_data}} d', 'n.id = d.id')
-            ->where('n.id > :lastid', array(':lastid'=> $lastid))
+            ->where(array('and', 'n.id > :lastid', 'n.status = :status', 'n.islink = 0'), array(':lastid'=> $lastid, ':status'=>$validStatus))
             ->order('n.id asc')
             ->limit(self::SYNC_ONCE_COUNT);
         
@@ -36,6 +38,11 @@ class PostCommand extends CConsoleCommand
     
     private static function saveNews($rows)
     {
+        if (count($rows) == 0) {
+            echo "no latest news.\n";
+            return ;
+        }
+        
         foreach ((array)$rows as $row) {
             app()->getCache()->set(self::SYNC_LASTID_CACHE_ID, $row['id']);
             if (empty($row['content'])) continue;
