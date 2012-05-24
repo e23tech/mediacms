@@ -2,6 +2,15 @@
 defined('DS') or define('DS', DIRECTORY_SEPARATOR);
 $params = require(dirname(__FILE__) . DS . 'setting_product.php');
 
+$dbconfig = array(
+    'dbHost' => '192.168.10.18',
+    'dbPort' => '3306',
+    'dbName' => 'e23_mediacms',
+    'dbUser' => 'mediacms',
+    'dbPassword' => '123',
+    'tablePrefix' => 'cd_',
+);
+
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
     'id' => $params['domain'],
@@ -19,12 +28,12 @@ return array(
 	'components'=>array(
 		'db' => array(
             'class' => 'CDbConnection',
-			'connectionString' => 'mysql:host=localhost; port=3306; dbname=e23_mediacms',
-			'username' => 'root',
-		    'password' => 'cdc_790406',
+			'connectionString' => sprintf('mysql:host=%s; port=%s; dbname=%s', $dbconfig['dbHost'], $dbconfig['dbPort'], $dbconfig['dbName']),
+			'username' => $dbconfig['dbUser'],
+		    'password' => $dbconfig['dbPassword'],
 		    'charset' => 'utf8',
 		    'persistent' => true,
-		    'tablePrefix' => 'cd_',
+		    'tablePrefix' => $dbconfig['tablePrefix'],
 //             'enableParamLogging' => true,
 //             'enableProfiling' => true,
 	        'schemaCacheID' => 'cache',
