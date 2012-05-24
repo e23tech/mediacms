@@ -1,5 +1,5 @@
 <?php
-class CdCurl
+class CDCurl
 {
     private $_ch;
     private $_headers;

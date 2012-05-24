@@ -37,6 +37,25 @@ class TestController extends Controller
         var_dump(app()->session);
     }
 
+    public function actionTest2()
+    {
+        header('content-type: text/plain');
+        $html = '< img  border="1" src="http://a.com/a.jpg" alt="adsf" /><img src=http://a.com/b.jpg/>';
+        $html = str_replace('/>', ' />', $html);
+        
+        $pattern = '/<.*?img.*?src="?(.+?)["\s]{1}?.*?>/is';
+        $result = preg_match_all($pattern, $html, $matches);
+        var_dump($result);
+        var_dump($matches);
+        
+        
+        $pattern = '/<.*?img.*?src="?(.+?)["\s]{1}?.*?>/is';
+        $img = '<img src="${1}" class="lazy" />';
+        $html = preg_replace($pattern, $img, $html);
+        
+        var_dump($html);
+    }
+    
     public function actionWeibo()
     {
         exit;

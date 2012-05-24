@@ -105,10 +105,8 @@ class Post extends CActiveRecord
 	 */
 	public function rules()
 	{
-		// NOTE: you should only define rules for those attributes that
-		// will receive user inputs.
 		return array(
-	        array('title, summary, content', 'required'),
+	        array('title, content', 'required'),
 	        array('post_type, category_id, topic_id, score_nums, comment_nums, digg_nums, visit_nums, user_id, create_time, state, istop, homeshow, disable_comment, contributor_id, recommend, hottest', 'numerical', 'integerOnly'=>true),
 			array('thumbnail, source, title, tags, contributor_site, contributor_email', 'length', 'max'=>250),
 			array('create_ip', 'length', 'max'=>15),
@@ -473,6 +471,11 @@ class Post extends CActiveRecord
 	        $this->summary = strip_tags($this->summary, param('summaryHtmlTags'));
 	}
 
+	private static function processImgTag($html)
+	{
+	    $pattern = '/<img src=(.+?)\s*?.*?\/?>/is';
+	    preg_match_all($pattern, $html, $matches);
+	}
 }
 
 

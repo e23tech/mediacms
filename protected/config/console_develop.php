@@ -11,10 +11,10 @@ return array(
     'timezone' => 'Asia/Shanghai',
 
     'import' => array(
-        'application.dmodels.*',
         'application.models.*',
         'application.extensions.*',
         'application.libs.*',
+        'application.helpers.*',
     ),
 	'components'=>array(
         'log' => array(
@@ -28,7 +28,7 @@ return array(
         ),
 		'db' => array(
             'class' => 'CDbConnection',
-			'connectionString' => 'mysql:host=127.0.0.1; port=3306; dbname=cd_waduanzi',
+			'connectionString' => 'mysql:host=127.0.0.1; port=3306; dbname=e23_mediacms',
 			'username' => 'root',
 		    'password' => '123',
 		    'charset' => 'utf8',
@@ -44,7 +44,7 @@ return array(
 		    'password' => 'searche23',
 		    'charset' => 'utf8',
 		    'persistent' => true,
-		    'tablePrefix' => 'cd_',
+		    'tablePrefix' => 'v9_',
             'enableParamLogging' => true,
             'enableProfiling' => true,
         ),
