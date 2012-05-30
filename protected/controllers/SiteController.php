@@ -3,6 +3,9 @@ class SiteController extends Controller
 {
     public function actionIndex()
     {
+        if (user()->getIsGuest())
+            user()->loginRequired();
+        
         $data = self::fetchLatestPosts();
         $data['hottest'] = self::fetchHottestPosts();
         $data['recommend'] = self::fetchRecommendPosts();
