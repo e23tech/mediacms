@@ -160,11 +160,13 @@ class AdminPost extends Post
         $classes = array(
             self::STATE_DISABLED => 'label-inverse',
             self::STATE_REJECTED => 'label-important',
+            self::STATE_TRASH => 'label-warning',
         );
         
         $labels = array(
             self::STATE_DISABLED => t('post_state_marker_disabled', 'admin'),
             self::STATE_REJECTED => t('post_state_marker_rejected', 'admin'),
+            self::STATE_TRASH => t('post_state_marker_trash', 'admin'),
         );
         
         $html = '';

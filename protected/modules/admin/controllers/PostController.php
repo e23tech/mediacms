@@ -105,6 +105,8 @@ class PostController extends AdminController
 	        $criteria->addColumnCondition(array('topic_id'=>$tid));
 	    }
 	    
+	    $criteria->addInCondition('t.state', array(Post::STATE_ENABLED, Post::STATE_DISABLED, Post::STATE_NOT_VERIFY));
+	    
 	    $data = AdminPost::fetchList($criteria);
 	    
 	    $this->adminTitle = $title;

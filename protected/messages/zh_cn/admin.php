@@ -188,6 +188,7 @@ return array(
     'post_state_not_verify' => '未审核',
     'post_state_marker_disabled' => '隐',
     'post_state_marker_rejected' => '拒',
+    'post_state_marker_trash' => '回',
     'post_marker_recommend' => '荐',
     'post_marker_hottest' => '热',
     'post_marker_top' => '顶',
