@@ -47,6 +47,14 @@ class PostCommand extends CConsoleCommand
             app()->getCache()->set(self::SYNC_LASTID_CACHE_ID, $row['id']);
             if (empty($row['content'])) continue;
             
+            $exist = app()->getDb()->createCommand()
+                ->select('count(*) c')
+                ->from(TABLE_POST)
+                ->where('content = :content', array(':content'=>$row['content']))
+                ->queryScalar();
+            
+            if ($exist) continue;
+            
             unset($model);
             $model = new Post();
             $model->title = $row['title'];
