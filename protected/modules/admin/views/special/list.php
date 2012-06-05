@@ -32,6 +32,6 @@
 <script type="text/javascript">
 $(function(){
 	var deleteConfirmText = '<?php echo t('delete_confirm', 'admin');?>';
-	$(document).on('click', '.row-state', BetaAdmin.ajaxSetBooleanColumn);
+	$(document).on('click', '.row-state, .set-delete', BetaAdmin.ajaxSetBooleanColumn);
 });
 </script>
