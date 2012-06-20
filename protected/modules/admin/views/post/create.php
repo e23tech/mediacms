@@ -9,6 +9,13 @@
 <input type="hidden" name="returnurl" value="<?php echo request()->getUrlReferrer();?>" />
 <fieldset>
     <legend><?php echo t('create_posts', 'admin');?></legend>
+    <div class="control-group bottom10px <?php if ($model->hasErrors('post_type')) echo 'error';?>">
+        <label class="control-label">类型</label>
+        <div class="controls radio-list">
+            <?php echo CHtml::activeDropDownList($model, 'post_type', $types);?>
+            <?php if ($model->hasErrors('post_type')):?><p class="help-block"><?php echo $model->getError('post_type');?></p><?php endif;?>
+        </div>
+    </div>
     <div class="control-group bottom10px <?php if ($model->hasErrors('title')) echo 'error';?>">
         <label class="control-label"><?php echo t('post_title');?></label>
         <div class="controls">

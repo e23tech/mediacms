@@ -163,7 +163,8 @@ return array(
 
     /* post manage */
     'create_posts' => '发表文章',
-    'latest_posts' => '最新发布',
+    'latest_posts' => '最新文章',
+    'latest_albums' => '最新相册',
     'verify_posts' => '审核文章',
     'search_posts' => '搜索文章',
     'hottest_posts' => '热门文章',

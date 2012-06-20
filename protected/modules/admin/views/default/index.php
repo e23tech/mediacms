@@ -27,6 +27,8 @@
                         <li><?php echo l(t('home_show_posts', 'admin'), url('admin/post/homeshow'), array('target'=>'main'));?></li>
                         <li><?php echo l(t('istop_posts', 'admin'), url('admin/post/istop'), array('target'=>'main'));?></li>
                         <li class="divider"></li>
+                        <li><?php echo l(t('latest_albums', 'admin'), url('admin/post/albums'), array('target'=>'main'));?></li>
+                        <li class="divider"></li>
                         <li class="nav-header">附件</li>
                         <li><?php echo l(t('upload_file_search', 'admin'), url('admin/upload/search'), array('target'=>'main'));?></li>
                         <li><?php echo l(t('upload_file_list', 'admin'), url('admin/upload/list'), array('target'=>'main'));?></li>
@@ -135,6 +137,7 @@
         <li><?php echo l(t('create_posts', 'admin'), url('admin/post/create'), array('target'=>'main'));?></li>
         <li><?php echo l(t('verify_posts', 'admin'), url('admin/post/verify'), array('target'=>'main'));?></li>
         <li><?php echo l(t('latest_posts', 'admin'), url('admin/post/latest'), array('target'=>'main'));?></li>
+        <li><?php echo l(t('latest_albums', 'admin'), url('admin/post/albums'), array('target'=>'main'));?></li>
         <li><?php echo l(t('search_posts', 'admin'), url('admin/post/search'), array('target'=>'main'));?></li>
         <li class="nav-header"><?php echo t('post_comment', 'admin');?></li>
         <li><?php echo l(t('verify_comment', 'admin'), url('admin/comment/verify'), array('target'=>'main'));?></li>

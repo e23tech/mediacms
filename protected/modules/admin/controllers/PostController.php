@@ -22,6 +22,11 @@ class PostController extends AdminController
     
 	public function actionCreate($id = 0)
 	{
+	    $types = array(
+	        Post::TYPE_POST => '文章',
+	        Post::TYPE_ALBUM => '相册',
+	    );
+	    
 	    $id = (int)$id;
 	    if ($id === 0) {
 	        $model = new AdminPost();
@@ -38,11 +43,9 @@ class PostController extends AdminController
 	    
 	    if (request()->getIsPostRequest() && isset($_POST['AdminPost'])) {
 	        $model->attributes = $_POST['AdminPost'];
-	        // 此处如果以后有多种文章模型了，这一句可以去掉。
 	        if ($model->getIsNewRecord()) {
 	            $model->user_id = user()->id;
 	            $model->user_name = user()->name;
-    	        $model->post_type = AdminPost::TYPE_POST;
 	        }
 	        if ($model->save()) {
 	            $this->afterPostSave($model);
@@ -65,6 +68,7 @@ class PostController extends AdminController
 		$this->render('create', array(
 		    'model'=>$model,
 	        'tempPictures' => $tempPictures,
+		    'types' => $types,
 		));
 	}
 	
@@ -85,6 +89,41 @@ class PostController extends AdminController
 	    $cid = (int)$cid;
 	    $tid = (int)$tid;
 	    $criteria = new CDbCriteria();
+	    $criteria->addColumnCondition(array('t.post_type' => Post::TYPE_POST));
+	    
+	    $title = t('post_list_table', 'admin');
+	    if ($cid > 0) {
+	        $category = AdminCategory::model()->findByPk($cid);
+	        if ($category === null)
+	            throw new CException(t('category_is_not_exist', 'admin'));
+	        
+	        $title = $title . ' - ' . $category->postsLink;
+	        $criteria->addColumnCondition(array('category_id'=>$cid));
+	    }
+	    
+	    if ($tid > 0) {
+	        $topic = AdminTopic::model()->findByPk($tid);
+	        if ($topic === null)
+	            throw new CException(t('topic_is_not_exist', 'admin'));
+	         
+	        $title = $title . ' - ' . $topic->postsLink;
+	        $criteria->addColumnCondition(array('topic_id'=>$tid));
+	    }
+	    
+	    $criteria->addInCondition('t.state', array(Post::STATE_ENABLED, Post::STATE_DISABLED, Post::STATE_NOT_VERIFY));
+	    
+	    $data = AdminPost::fetchList($criteria);
+	    
+	    $this->adminTitle = $title;
+	    $this->render('list', $data);
+	}
+	
+	public function actionAlbums($cid = 0, $tid = 0)
+	{
+	    $cid = (int)$cid;
+	    $tid = (int)$tid;
+	    $criteria = new CDbCriteria();
+	    $criteria->addColumnCondition(array('t.post_type' => Post::TYPE_ALBUM));
 	    
 	    $title = t('post_list_table', 'admin');
 	    if ($cid > 0) {
