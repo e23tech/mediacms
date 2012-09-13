@@ -26,6 +26,12 @@ class Controller extends CController
 	
 	public $breadcrumbs = array();
 	
+	public function init()
+	{
+	    if (strtolower($this->id) != 'api')
+	        $this->redirect('http://www.e23.cn/');
+	}
+	
 	protected function setPageKeyWords($value)
 	{
 	    if (empty($value)) return false;
