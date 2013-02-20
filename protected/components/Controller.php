@@ -26,7 +26,7 @@ class Controller extends CController
 	
 	public $breadcrumbs = array();
 	
-	public function init()
+	public function init1()
 	{
 	    $actions = array('login', 'logout', 'signup');
 	    if (strtolower($this->id) != 'api' && !in_array(strtolower($this->action->id), $actions))
