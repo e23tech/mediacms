@@ -28,7 +28,8 @@ class Controller extends CController
 	
 	public function init()
 	{
-	    if (strtolower($this->id) != 'api')
+	    $actions = array('login', 'logout', 'signup');
+	    if (strtolower($this->id) != 'api' && !in_array(strtolower($this->action->id), $actions))
 	        $this->redirect('http://www.e23.cn/');
 	}
 	
