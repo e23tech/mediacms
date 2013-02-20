@@ -4,7 +4,7 @@ require(BETA_CONFIG_ROOT . DS . 'define.php');
 
 
 $dbconfig = array(
-    'dbHost' => '192.168.10.18',
+    'dbHost' => 'localhost',
     'dbPort' => '3306',
     'dbName' => 'e23_mediacms',
     'dbUser' => 'mediacms',
